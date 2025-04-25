@@ -62,7 +62,7 @@ def print_ranking_results(json_data):
 
 def main():
     # File path for testing
-    testing_file_path = 'mock_data.json'
+    testing_file_path = 'mock_data/source_ranking_input.json'
 
     # Load the data
     json_data = load_json(testing_file_path)
