@@ -1,0 +1,27 @@
+{
+    "query": "What causes inflation?",
+    "data": [
+      {
+        "url": "https://www.federalreserve.gov/faqs/economy_14419.htm",
+        "parsed_text": "Inflation is the increase in the prices of goods and services over time. Inflation cannot be measured by an increase in the cost of one product or service, or even several products or services. Rather, inflation is a general increase in the overall price level of the goods and services in the economy."
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Inflation",
+        "parsed_text": "In economics, inflation is an increase in the average price of goods and services in terms of money. This is usually measured using a consumer price index (CPI). When the general price level rises, each unit of currency buys fewer goods and services; consequently, inflation corresponds to a reduction in the purchasing power of money."
+      },
+      {
+        "url": "https://www.imf.org/en/Publications/fandd/issues/Series/Back-to-Basics/Inflation",
+        "parsed_text": "Inflation is the rate of increase in prices over a given period of time. Inflation is typically a broad measure, such as the overall increase in prices or the increase in the cost of living in a country. But it can also be more narrowly calculated—for certain goods, such as food, or for services, such as a haircut, for example. Whatever the context, inflation represents how much more expensive the relevant set of goods and/or services has become over a certain period, most commonly a year."
+      },
+      {
+        "url": "https://quora.com/What-causes-inflation",
+        "parsed_text": "With inflation, prices become more unstable and the value of your money gradually bleeds away."
+      },
+      {
+        "url": "https://www.sciencedirect.com/science/article/pii/S0142941823003537",
+        "parsed_text": "In the present work, an inexpensive setup of an experiment of balloon inflation is described in order to measure its pressure and diameter."
+      }
+    ]
+  }
+  
+  

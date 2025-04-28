@@ -1,2 +1,7 @@
 numpy==2.2.5
 pandas==2.2.3
+torch==2.7.0
+transformers==4.51.3
+scikit-learn==1.6.1
+anthropic==0.50.0
+python-dotenv==1.1.0
