@@ -53,7 +53,7 @@ def print_ranking_results(json_data):
     print(f'\nRanking Results:')
     print(f'Ranked Document Indices: {json_data["ranked_doc_indices"]}')
     for i, doc_item in enumerate(json_data['data']):
-        print(f"Document {i+1}:")
+        print(f"Document {i}:")
         print(f"  URL: {doc_item['url']}")
         # print(f"  Text: {doc_item['parsed_text']}")
         print(f"  Similarity: {doc_item['similarity']}")
@@ -61,12 +61,16 @@ def print_ranking_results(json_data):
     print()
 
 
-def main():
-    # File path for testing
-    testing_file_path = 'mock_data/source_ranking_input.json'
+def source_ranking_main(data_file_path=None, print_results=True):
+
+    # If no data file path provided, use testing one
+    if not data_file_path:
+        # File path for testing
+        data_file_path = 'mock_data/source_ranking_input.json'
+        print(f'Using testing file path: {data_file_path}')
 
     # Load the data
-    json_data = load_json(testing_file_path)
+    json_data = load_json(data_file_path)
 
     # Extract query
     query = json_data['query']
@@ -104,8 +108,12 @@ def main():
 
     
     # Print out ranking results
-    print_ranking_results(json_data)
+    if print_results:
+        print_ranking_results(json_data)
+
+    # Return the JSON data
+    return json_data
 
 
 if __name__ == '__main__':
-    main()
+    source_ranking_main()
