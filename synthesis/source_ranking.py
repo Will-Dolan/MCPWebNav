@@ -51,6 +51,7 @@ def embed_documents(documents, tokenizer, model):
 def print_ranking_results(json_data):
     print(f'Query: {json_data["query"]}')
     print(f'\nRanking Results:')
+    print(f'Ranked Document Indices: {json_data["ranked_doc_indices"]}')
     for i, doc_item in enumerate(json_data['data']):
         print(f"Document {i+1}:")
         print(f"  URL: {doc_item['url']}")
