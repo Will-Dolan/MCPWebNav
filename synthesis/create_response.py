@@ -5,10 +5,13 @@ from dotenv import load_dotenv
 from source_ranking import source_ranking_main
 
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 # System-related parameters
 TEMPERATURE = 0.1
 SYSTEM_PROMPT = '''
-You are a helpful assistant that summarizes multiple documents in order to answer a user's query.
+You are a helpful assistant that summarizes multiple documents in order to answer a user's query. Answer the query to the
+best of your understanding. Do not include external information or make up facts. Only include the answer.
 '''
 
 
