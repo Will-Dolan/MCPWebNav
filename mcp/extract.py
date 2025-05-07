@@ -53,7 +53,7 @@ def extract_info_from_links(urls):
         else:
             print("  - Failed to fetch page content.")  # Status update
 
-        time.sleep(20)  # Avoid rate limits
+        time.sleep(5)  # Avoid rate limits
 
     print("All URLs processed.")  # Final status update
     return summaries
