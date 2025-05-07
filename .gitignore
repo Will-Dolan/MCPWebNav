@@ -1,2 +1,4 @@
 .env
+# using this for virtualenv
+env 
 __pycache__/
