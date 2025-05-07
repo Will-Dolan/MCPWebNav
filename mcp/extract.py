@@ -36,11 +36,11 @@ def extract_info_from_links(urls):
         if page_text:
             print("  - Page content fetched.")  # Status update
 
-            prompt = f"Extract key information from the following article content:\n\n{page_text}"
+            prompt = f"Extract key information from the following article content and respond in a plain text paragraph with no formatting. Do not preface the text in any way.\n\n{page_text}"
 
             response = client.messages.create(
                 model="claude-3-5-haiku-20241022",
-                max_tokens=400,
+                max_tokens=500,
                 messages=[
                     {"role": "user", "content": prompt}
                 ]
@@ -53,7 +53,8 @@ def extract_info_from_links(urls):
         else:
             print("  - Failed to fetch page content.")  # Status update
 
-        time.sleep(5)  # Avoid rate limits
+        time.sleep(20)  # Avoid rate limits
 
     print("All URLs processed.")  # Final status update
     return summaries
+
