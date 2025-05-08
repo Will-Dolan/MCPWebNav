@@ -9,7 +9,7 @@ import anthropic
 import time
 
 # Replace with your Claude API key
-API_KEY = "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"
+API_KEY = "APIKEY"
 
 # Initialize Claude API client
 client = anthropic.Anthropic(api_key=API_KEY)
