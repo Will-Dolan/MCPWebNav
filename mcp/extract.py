@@ -8,8 +8,13 @@ from bs4 import BeautifulSoup
 import anthropic
 import time
 
-# Replace with your Claude API key
-API_KEY = "APIKEY"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Read API key from env variable
+API_KEY = os.getenv('ANTHROPIC_API_KEY')
 
 # Initialize Claude API client
 client = anthropic.Anthropic(api_key=API_KEY)
