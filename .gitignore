@@ -2,3 +2,4 @@
 # using this for virtualenv
 env 
 __pycache__/
+mcp/server_debug.txt
