@@ -1,0 +1,9 @@
+2025-05-09 23:36:01 - Server starting up. Debug log at: /home/will/USCCS/itp459/MCPWebNav/mcp/server_debug.txt
+2025-05-09 23:36:01 - Current working directory: /home/will/USCCS/itp459/MCPWebNav/mcp
+2025-05-09 23:36:05 - google_search called with query: quantum, num_results: 5
+2025-05-09 23:36:05 - Performing search with query: quantum
+2025-05-09 23:36:07 - Search completed, found 0 results
+2025-05-09 23:36:07 - Returning JSON string: []
+2025-05-09 23:36:07 - []
+2025-05-09 23:36:07 - <class 'str'>
+2025-05-09 23:36:07 - [
