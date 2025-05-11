@@ -8,10 +8,12 @@ import json
 from googlesearch import search 
 import datetime
 from dotenv import load_dotenv
+from mcp.query import QueryProcessor
 load_dotenv()
 
 mcp = FastMCP("Web Navigation Server")
 client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
+query_processor = QueryProcessor()
 
 debug_file_path = os.path.join(os.getcwd(), "server_debug.txt")
 f = open(debug_file_path, "w")
@@ -41,14 +43,25 @@ def google_search(query: str, num_results: int = 5) -> list:
     
     try:
         results = []
-        
+        # Process query through QueryProcessor if it's a natural language query
+        # This is purely optional - we'll use the original query if it looks like a search query already
+        if ' ' in query and not query.startswith('+') and '+' not in query:
+            debug_log("Processing as natural language query")
+            query_analysis_json = process_query(query)
+            query_analysis = json.loads(query_analysis_json)
+
+            if "error" not in query_analysis:
+                search_query = query_analysis.get("search_query", query)
+                debug_log(f"Enhanced search query: {search_query}")
+                query = search_query
+
         debug_log(f"Performing search with query: {query}")
-        
+
         # The googlesearch-python package only returns URLs, not titles
         # Setting pause to 2.0 to avoid getting blocked by Google
         search_results = list(search(
-            query, 
-            num=1, 
+            query,
+            num=1,
             start=1,
             stop=5,
             lang="en",
@@ -209,6 +222,28 @@ def analyze_content(query: str, passages: list, links: list) -> dict:
         return {"error": f"Failed to analyze content: {str(e)}"}
     
 @mcp.tool()
+def process_query(query: str, use_context: bool = True) -> dict:
+    """
+    Process a user query to enhance it for better search results.
+
+    Args:
+        query: The user's search query
+        use_context: Whether to use conversation context (default: True)
+
+    Returns:
+        Enhanced query analysis with search strategy and refinements
+    """
+    debug_log(f"process_query called with: {query}, use_context: {use_context}")
+
+    try:
+        # Process the query using QueryProcessor
+        query_analysis = query_processor.process_query(query, use_context)
+        return json.dumps(query_analysis)
+    except Exception as e:
+        debug_log(f"Error in process_query: {str(e)}")
+        return json.dumps({"error": f"Query processing failed: {str(e)}"})
+
+@mcp.tool()
 def navigate_web(query: str, max_depth: int = 3) -> dict:
     """
     Run a complete web navigation cycle based on the user query.
@@ -220,8 +255,16 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
     Returns:
         Results of the web navigation including relevant content
     """
+    # Process query first to enhance it
+    query_analysis_json = process_query(query)
+    query_analysis = json.loads(query_analysis_json)
+
+    # Use the enhanced query if available, otherwise use original
+    search_query = query_analysis.get("search_query", query) if "error" not in query_analysis else query
+    debug_log(f"Using search query: {search_query}")
+
     # Start with Google search
-    search_results = google_search(query)
+    search_results = google_search(search_query)
     debug_log(search_results)
     debug_log(type(search_results))
     
