@@ -1,6 +1,6 @@
+# server.py
 from mcp.server import FastMCP
 import requests
-import logging
 from bs4 import BeautifulSoup
 import anthropic
 import os
@@ -511,7 +511,6 @@ def navigate_web(query: str, max_depth: int = 3, use_claude_for_query: bool = Tr
     
     # If we've reached max depth or run out of links
     debug_log("Reached max depth or no more links")
-    debug_log(f"Collected {len(collected_extractions)} extractions")
     debug_log(f"Visited {len(visited_urls)} URLs")
     
     # Save just the query information to results.json
@@ -529,7 +528,6 @@ def navigate_web(query: str, max_depth: int = 3, use_claude_for_query: bool = Tr
             "action": "completed_with_extractions",
             "depth_reached": depth,
             "visited_urls": list(visited_urls),
-            "extracted_content": collected_extractions,
             "collected_passages": collected_passages
         }
     # Otherwise return what we have

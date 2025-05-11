@@ -1,10 +1,11 @@
+# backend_api.py
 import os
 from dotenv import load_dotenv
 import anthropic
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
 
-from mcp.query import QueryProcessor
+from query import QueryProcessor
 from mcp.get_urls import query_common_crawl, query_to_url_patterns
 from mcp.extract import extract_info_from_links
 from synthesis.source_ranking import load_tokenizer_and_model, embed_documents, mean_pooling

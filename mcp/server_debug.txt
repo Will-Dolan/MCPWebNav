@@ -1,51 +1,51 @@
-2025-05-11 15:18:19 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
-2025-05-11 15:18:19 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
-2025-05-11 15:18:20 - navigate_web called with: Python programming, max_depth: 3, use_claude_for_query: True
-2025-05-11 15:18:20 - Original query: Python programming
-2025-05-11 15:18:20 - process_query called with: Python programming, use_claude: True
-2025-05-11 15:18:23 - Query processing successful. Enhanced query: Python+programming+tutorial+basics+examples+best+practices
-2025-05-11 15:18:23 - Using enhanced query: Python+programming+tutorial+basics+examples+best+practices
-2025-05-11 15:18:23 - google_search called with query: Python+programming+tutorial+basics+examples+best+practices, num_results: 5
-2025-05-11 15:18:23 - Performing search with query: Python+programming+tutorial+basics+examples+best+practices
-2025-05-11 15:18:28 - Search completed, found 6 results
-2025-05-11 15:18:28 - Added result: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
-2025-05-11 15:18:28 - Added result: https://www.geeksforgeeks.org/python-programming-examples/
-2025-05-11 15:18:28 - Added result: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
-2025-05-11 15:18:28 - Added result: https://docs.python.org/3/tutorial/index.html
-2025-05-11 15:18:28 - Added result: https://realpython.com/tutorials/best-practices/
-2025-05-11 15:18:28 - Added result: https://www.w3schools.com/python/
-2025-05-11 15:18:28 - Returning JSON string: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
-2025-05-11 15:18:28 - Search results: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
-2025-05-11 15:18:28 - Current depth: 0
-2025-05-11 15:18:28 - Next link to explore: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
-2025-05-11 15:18:28 - Remaining links: 5
-2025-05-11 15:18:28 - Scraping webpage: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
-2025-05-11 15:18:29 - Added passage from https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3, title: A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior Técnico, U.Lisboa). · GitHub
-2025-05-11 15:18:29 - Analyzing content
-2025-05-11 15:18:36 - Analysis result action: both
-2025-05-11 15:18:36 - Both extracting content and adding links to explore
-2025-05-11 15:18:36 - Adding 4 links to explore
-2025-05-11 15:18:36 - Current depth: 1
-2025-05-11 15:18:36 - Next link to explore: https://www.geeksforgeeks.org/python-programming-examples/
-2025-05-11 15:18:36 - Remaining links: 8
-2025-05-11 15:18:36 - Scraping webpage: https://www.geeksforgeeks.org/python-programming-examples/
-2025-05-11 15:18:37 - Added passage from https://www.geeksforgeeks.org/python-programming-examples/, title: Python Programs | GeeksforGeeks
-2025-05-11 15:18:37 - Analyzing content
-2025-05-11 15:18:43 - Analysis result action: both
-2025-05-11 15:18:43 - Both extracting content and adding links to explore
-2025-05-11 15:18:43 - Adding 5 links to explore
-2025-05-11 15:18:43 - Current depth: 2
-2025-05-11 15:18:43 - Next link to explore: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
-2025-05-11 15:18:43 - Remaining links: 12
-2025-05-11 15:18:43 - Scraping webpage: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
-2025-05-11 15:18:44 - Added passage from https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/, title: Reddit - The heart of the internet
-2025-05-11 15:18:44 - Analyzing content
-2025-05-11 15:18:51 - Analysis result action: both
-2025-05-11 15:18:51 - Both extracting content and adding links to explore
-2025-05-11 15:18:51 - Adding 6 links to explore
-2025-05-11 15:18:51 - Reached max depth or no more links
-2025-05-11 15:18:51 - Collected 39 extractions
-2025-05-11 15:18:51 - Visited 3 URLs
-2025-05-11 15:18:51 - Saving results to results.json
-2025-05-11 15:18:51 - Successfully saved results to results.json
-2025-05-11 15:18:51 - Returning with collected extractions
+2025-05-11 15:22:29 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
+2025-05-11 15:22:29 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
+2025-05-11 15:22:31 - navigate_web called with: Python programming, max_depth: 3, use_claude_for_query: True
+2025-05-11 15:22:31 - Original query: Python programming
+2025-05-11 15:22:31 - process_query called with: Python programming, use_claude: True
+2025-05-11 15:22:33 - Query processing successful. Enhanced query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:22:33 - Using enhanced query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:22:33 - google_search called with query: Python+programming+tutorial+basics+examples+best+practices, num_results: 5
+2025-05-11 15:22:33 - Performing search with query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:22:38 - Search completed, found 6 results
+2025-05-11 15:22:38 - Added result: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:22:38 - Added result: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:22:38 - Added result: https://docs.python.org/3/tutorial/index.html
+2025-05-11 15:22:38 - Added result: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
+2025-05-11 15:22:38 - Added result: https://realpython.com/tutorials/best-practices/
+2025-05-11 15:22:38 - Added result: https://www.w3schools.com/python/
+2025-05-11 15:22:38 - Returning JSON string: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
+2025-05-11 15:22:38 - Search results: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
+2025-05-11 15:22:38 - Current depth: 0
+2025-05-11 15:22:38 - Next link to explore: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:22:38 - Remaining links: 5
+2025-05-11 15:22:38 - Scraping webpage: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:22:39 - Added passage from https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3, title: A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior Técnico, U.Lisboa). · GitHub
+2025-05-11 15:22:39 - Analyzing content
+2025-05-11 15:22:45 - Analysis result action: both
+2025-05-11 15:22:45 - Both extracting content and adding links to explore
+2025-05-11 15:22:45 - Adding 5 links to explore
+2025-05-11 15:22:45 - Current depth: 1
+2025-05-11 15:22:45 - Next link to explore: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:22:45 - Remaining links: 9
+2025-05-11 15:22:45 - Scraping webpage: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:22:45 - Added passage from https://www.geeksforgeeks.org/python-programming-examples/, title: Python Programs | GeeksforGeeks
+2025-05-11 15:22:45 - Analyzing content
+2025-05-11 15:22:53 - Analysis result action: both
+2025-05-11 15:22:53 - Both extracting content and adding links to explore
+2025-05-11 15:22:53 - Adding 4 links to explore
+2025-05-11 15:22:53 - Current depth: 2
+2025-05-11 15:22:53 - Next link to explore: https://docs.python.org/3/tutorial/index.html
+2025-05-11 15:22:53 - Remaining links: 12
+2025-05-11 15:22:53 - Scraping webpage: https://docs.python.org/3/tutorial/index.html
+2025-05-11 15:22:53 - Added passage from https://docs.python.org/3/tutorial/index.html, title: The Python Tutorial — Python 3.13.3 documentation
+2025-05-11 15:22:53 - Analyzing content
+2025-05-11 15:22:57 - Analysis result action: both
+2025-05-11 15:22:57 - Both extracting content and adding links to explore
+2025-05-11 15:22:57 - Adding 3 links to explore
+2025-05-11 15:22:57 - Reached max depth or no more links
+2025-05-11 15:22:57 - Collected 18 extractions
+2025-05-11 15:22:57 - Visited 3 URLs
+2025-05-11 15:22:57 - Saving results to results.json
+2025-05-11 15:22:57 - Successfully saved results to results.json
+2025-05-11 15:22:57 - Returning with collected extractions

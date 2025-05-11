@@ -5,7 +5,7 @@
   "depth_reached": 3,
   "visited_urls": [
     "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-    "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/",
+    "https://docs.python.org/3/tutorial/index.html",
     "https://www.geeksforgeeks.org/python-programming-examples/"
   ],
   "extracted_content": [
@@ -38,28 +38,7 @@
       }
     },
     {
-      "paragraph": "Exception: In very short blocks, when the meaning is clearly visible from the immediate context",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Up to you, but be consistent. Enough said.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
       "paragraph": "However, note that: A tab could be a different number of columns depending on your environment, but a space is always one column. In terms of how many spaces (or tabs) constitutes indentation, it's more important to be consistent throughout your code than to use any specific tab stop value.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Avoid comparing to True, False or None.",
       "source": {
         "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
         "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
@@ -73,70 +52,7 @@
       }
     },
     {
-      "paragraph": "Yes",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Import entire modules instead of individual symbols within a module. For example, for a top-level module canteen that has a file canteen/sessions.py,",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Put all imports at the top of the page with three sections, each separated by a blank line, in this order:",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
       "paragraph": "Follow PEP 257's docstring guidelines. reStructured Text and Sphinx can help to enforce these standards.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "When possible, use one-line docstrings for obvious functions.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Multiline docstrings should include",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Use them sparingly. Prefer code readability to writing a lot of comments. Often, small methods are more effective than comments.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Don't stress over it. 80-100 characters is fine.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Use parentheses for line continuations.",
-      "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Strive for 100% code coverage, but don't get obsess over the coverage score.",
       "source": {
         "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
         "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
@@ -158,48 +74,6 @@
     },
     {
       "paragraph": "In this section, you will find all the basic Python programming examples. So, explore the section and complete the basic stage of Python programming.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "To scale up Array logic, try out the below-listed Python array programming examples. Here, you will find all the important Python  programming examples that are related to the Python array concept.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "Explore the below section and try out all the important Python List programming examples.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "Get a detailed list of Python Matrix examples and boost your understanding of matrix concepts in Python.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "If you are looking for Python programming examples that are based on the Python string concept, then scroll down to the below section and practice a wide range of Python string program examples.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "In this section, you will find out all the important practice sets or examples related to the Python Dictionary concept.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "Explore the wide range of Tuple programs here in this section of Python programming examples.",
       "source": {
         "url": "https://www.geeksforgeeks.org/python-programming-examples/",
         "title": "Python Programs | GeeksforGeeks"
@@ -213,73 +87,52 @@
       }
     },
     {
-      "paragraph": "Follow PEP 8, when sensible.",
+      "paragraph": "1. Whetting Your Appetite",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "Avoid one-letter variables (esp. l, O, I).",
+      "paragraph": "Python is an easy to learn, powerful programming language. It has efficient\nhigh-level data structures and a simple but effective approach to\nobject-oriented programming. Python\u00e2\u0080\u0099s elegant syntax and dynamic typing,\ntogether with its interpreted nature, make it an ideal language for scripting\nand rapid application development in many areas on most platforms.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "Up to you, but be consistent. Enough said.",
+      "paragraph": "The Python interpreter and the extensive standard library are freely available\nin source or binary form for all major platforms from the Python web site,\nhttps://www.python.org/, and may be freely distributed. The same site also\ncontains distributions of and pointers to many free third party Python modules,\nprograms and tools, and additional documentation.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "However, note that: A tab could be a different number of columns depending on your environment, but a space is always one column. In terms of how many spaces (or tabs) constitutes indentation, it's more important to be consistent throughout your code than to use any specific tab stop value.",
+      "paragraph": "The Python interpreter is easily extended with new functions and data types\nimplemented in C or C++ (or other languages callable from C). Python is also\nsuitable as an extension language for customizable applications.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "The with statement ensures that clean-up code is executed. When opening a file, with will make sure that the file is closed after the with block.",
+      "paragraph": "This tutorial introduces the reader informally to the basic concepts and\nfeatures of the Python language and system. It helps to have a Python\ninterpreter handy for hands-on experience, but all examples are self-contained,\nso the tutorial can be read off-line as well.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "Follow PEP 257's docstring guidelines. reStructured Text and Sphinx can help to enforce these standards.",
+      "paragraph": "For a description of standard objects and modules, see The Python Standard Library.\nThe Python Language Reference gives a more formal definition of the language.  To write\nextensions in C or C++, read Extending and Embedding the Python Interpreter and\nPython/C API Reference Manual. There are also several books covering Python in depth.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     },
     {
-      "paragraph": "Strive for 100% code coverage, but don't get obsess over the coverage score.",
+      "paragraph": "This tutorial does not attempt to be comprehensive and cover every single\nfeature, or even every commonly used feature. Instead, it introduces many of\nPython\u00e2\u0080\u0099s most noteworthy features, and will give you a good idea of the\nlanguage\u00e2\u0080\u0099s flavor and style. After reading it, you will be able to read and\nwrite Python modules and programs, and you will be ready to learn more about the\nvarious Python library modules described in The Python Standard Library.",
       "source": {
-        "url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3",
-        "title": "A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior T\u00e9cnico, U.Lisboa). \u00b7 GitHub"
-      }
-    },
-    {
-      "paragraph": "Practice with Python program examples is always a good choice to scale up your logical understanding and programming skills and this article will provide you with the best sets of Python code examples.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "The below Python section contains a wide collection of Python programming examples. These Python code examples cover a wide range of basic concepts in the Python language, including List, Strings, Dictionary, Tuple, sets, and many more. Each program example contains multiple approaches to solve the problem.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
-      }
-    },
-    {
-      "paragraph": "In this section, you will find all the basic Python programming examples. So, explore the section and complete the basic stage of Python programming.",
-      "source": {
-        "url": "https://www.geeksforgeeks.org/python-programming-examples/",
-        "title": "Python Programs | GeeksforGeeks"
+        "url": "https://docs.python.org/3/tutorial/index.html",
+        "title": "The Python Tutorial \u2014 Python 3.13.3 documentation"
       }
     }
   ],
@@ -295,9 +148,9 @@
       "content": "Practice with Python program examples is always a good choice to scale up your logical understanding and programming skills and this article will provide you with the best sets of Python code examples.\n\nThe below Python section contains a wide collection of Python programming examples. These Python code examples cover a wide range of basic concepts in the Python language, including List, Strings, Dictionary, Tuple, sets, and many more. Each program example contains multiple approaches to solve the problem.\n\nIn this section, you will find all the basic Python programming examples. So, explore the section and complete the basic stage of Python programming.\n\nTo scale up Array logic, try out the below-listed Python array programming examples. Here, you will find all the important Python  programming examples that are related to the Python array concept.\n\nExplore the below section and try out all the important Python List programming examples.\n\nGet a detailed list of Python Matrix examples and boost your understanding of matrix concepts in Python.\n\nIf you are looking for Python programming examples that are based on the Python string concept, then scroll down to the below section and practice a wide range of Python string program examples.\n\nIn this section, you will find out all the important practice sets or examples related to the Python Dictionary concept.\n\nExplore the wide range of Tuple programs here in this section of Python programming examples.\n\nIn this section, on searching and sorting examples, we have mentioned all the important example sets of Python searching and sorting to boost your Python programming concept.\n\nGet a complete list of Python pattern printing examples in the below section.\n\nIn this section, we have mentioned all important Python program examples that are related to the Python Date-Time concept.\n\nTo boost Python Regex concept get a list of Python Regex programming examples below.\n\nIf you want to scale up your Python file handling concept, explore the below section and find out all the real-life Python programming examples on Python file handling.\n\nFind a more important or popular list of Python programming examples below and upscale your Python programming skills. \n\n"
     },
     {
-      "url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/",
-      "title": "Reddit - The heart of the internet",
-      "content": "\nPycon US 2025 starts next week!\n    \n\n\n              The official Python community for Reddit! Stay up to date with the latest news, packages, and meta information relating to the Python programming language. \n---\n\nIf you have questions or are new to Python use r/LearnPython\n            \n\n\n      I have been writing Python for six years now, it's my primary language - but mostly in an academic/personal project setting and for machine learning.\n    \n\n\n      Now, I find myself spearheading an ML project at a big company, and our backend code base keeps growing, and other people depend on it. There are layers to it, with threads spawning, and dependencies on caches and databases for state sharing. It's more than a pet project - you get the gist.\n    \n\n\n      I want to write clean code.\n    \n\n\n      Am I wrong in thinking that the code should have enough documentation ingrained that using some automated service gives me an API documentation and I don't have to write it manually?\n    \n\n\n      That's what I see with many open source projects. How are people doing it in the industry? Do you use type hints? If yes, mypy or pyright or something else?\n    \n\n\n      On IDEs - a guy I respect used to write in PyCharm with strong pylint rules, but that was 5 years ago. VSCode is very lightweight when compared to PyCharm. For production-ready/\"industry-grade\" code, what are your personal recommendations on IDEs? If VSCode, what extensions do you use?\n    \n\n\n      Also, any other general personal recommendations? I usually strongly abide by \"explicit is better than implicit\".\n    \n\n\n      Edit: Also, can you share your thoughts on FastAPI vs Flask if you've used these?\n    \n\n\n                  Create your account and connect with a world of communities.\n                \n\n\nPycon US 2025 starts next week!\n    \n\nAnyone can view, post, and comment to this community"
+      "url": "https://docs.python.org/3/tutorial/index.html",
+      "title": "The Python Tutorial \u2014 Python 3.13.3 documentation",
+      "content": "Changelog\n\n1. Whetting Your Appetite\n\nPython is an easy to learn, powerful programming language. It has efficient\nhigh-level data structures and a simple but effective approach to\nobject-oriented programming. Python\u00e2\u0080\u0099s elegant syntax and dynamic typing,\ntogether with its interpreted nature, make it an ideal language for scripting\nand rapid application development in many areas on most platforms.\n\nThe Python interpreter and the extensive standard library are freely available\nin source or binary form for all major platforms from the Python web site,\nhttps://www.python.org/, and may be freely distributed. The same site also\ncontains distributions of and pointers to many free third party Python modules,\nprograms and tools, and additional documentation.\n\nThe Python interpreter is easily extended with new functions and data types\nimplemented in C or C++ (or other languages callable from C). Python is also\nsuitable as an extension language for customizable applications.\n\nThis tutorial introduces the reader informally to the basic concepts and\nfeatures of the Python language and system. It helps to have a Python\ninterpreter handy for hands-on experience, but all examples are self-contained,\nso the tutorial can be read off-line as well.\n\nFor a description of standard objects and modules, see The Python Standard Library.\nThe Python Language Reference gives a more formal definition of the language.  To write\nextensions in C or C++, read Extending and Embedding the Python Interpreter and\nPython/C API Reference Manual. There are also several books covering Python in depth.\n\nThis tutorial does not attempt to be comprehensive and cover every single\nfeature, or even every commonly used feature. Instead, it introduces many of\nPython\u00e2\u0080\u0099s most noteworthy features, and will give you a good idea of the\nlanguage\u00e2\u0080\u0099s flavor and style. After reading it, you will be able to read and\nwrite Python modules and programs, and you will be ready to learn more about the\nvarious Python library modules described in The Python Standard Library.\n\nThe Glossary is also worth going through.\n\nChangelog\n\n1. Whetting Your Appetite"
     }
   ]
 }

@@ -1,0 +1,124 @@
+2025-05-11 16:15:06 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/server_debug.txt
+2025-05-11 16:15:06 - Current working directory: /home/will/USCCS/MCPWebNav
+2025-05-11 16:15:06 - Starting server.py
+2025-05-11 16:15:10 - get_chat_response called with query: what is quantum computing, history length: 0
+2025-05-11 16:15:10 - complete_search_pipeline called with query: what is quantum computing, num_results: 5
+2025-05-11 16:15:10 - Step 1: Enhancing query
+2025-05-11 16:15:10 - enhance_query called with: what is quantum computing
+2025-05-11 16:15:18 - Original query: what is quantum computing
+2025-05-11 16:15:18 - Enhanced query: quantum computing explained basics applications advantages
+2025-05-11 16:15:18 - Step 2: Performing Google search
+2025-05-11 16:15:18 - google_search called with query: quantum computing explained basics applications advantages, num_results: 5
+2025-05-11 16:15:18 - Performing search with query: quantum computing explained basics applications advantages
+2025-05-11 16:15:24 - Search completed, found 6 results
+2025-05-11 16:15:24 - Added result: https://rightpeoplegroup.com/blog/quantum-computing-applications-implications-business
+2025-05-11 16:15:24 - Added result: https://aws.amazon.com/what-is/quantum-computing/
+2025-05-11 16:15:24 - Added result: https://www.bluequbit.io/quantum-computing-basics
+2025-05-11 16:15:24 - Added result: https://www.theknowledgeacademy.com/blog/advantages-and-disadvantages-of-quantum-computing/
+2025-05-11 16:15:24 - Added result: https://www.reddit.com/r/QuantumComputing/comments/1j498pc/to_a_layman_what_are_the_applications_of_quantum/
+2025-05-11 16:15:24 - Added result: https://ionq.com/resources/quantum-computing-101-introduction-evaluation-applications
+2025-05-11 16:15:24 - Step 3: Extracting content from search results
+2025-05-11 16:15:24 - Scraping content from: https://rightpeoplegroup.com/blog/quantum-computing-applications-implications-business
+2025-05-11 16:15:24 - scrape_webpage called with URL: https://rightpeoplegroup.com/blog/quantum-computing-applications-implications-business
+2025-05-11 16:15:25 - Successfully scraped webpage, title: Quantum computing explained: What it is, applications, and implications in business | Right People Group
+2025-05-11 16:15:25 - Scraping content from: https://aws.amazon.com/what-is/quantum-computing/
+2025-05-11 16:15:25 - scrape_webpage called with URL: https://aws.amazon.com/what-is/quantum-computing/
+2025-05-11 16:15:25 - Successfully scraped webpage, title: What is Quantum Computing? - Quantum Computing Explained - AWS
+2025-05-11 16:15:25 - Scraping content from: https://www.bluequbit.io/quantum-computing-basics
+2025-05-11 16:15:25 - scrape_webpage called with URL: https://www.bluequbit.io/quantum-computing-basics
+2025-05-11 16:15:25 - Successfully scraped webpage, title: Quantum Computing Basics: A Beginnerâs Guide
+2025-05-11 16:15:25 - Scraping content from: https://www.theknowledgeacademy.com/blog/advantages-and-disadvantages-of-quantum-computing/
+2025-05-11 16:15:25 - scrape_webpage called with URL: https://www.theknowledgeacademy.com/blog/advantages-and-disadvantages-of-quantum-computing/
+2025-05-11 16:15:27 - Successfully scraped webpage, title: Advantages and Disadvantages of Quantum Computing: Explained 
+2025-05-11 16:15:27 - Scraping content from: https://www.reddit.com/r/QuantumComputing/comments/1j498pc/to_a_layman_what_are_the_applications_of_quantum/
+2025-05-11 16:15:27 - scrape_webpage called with URL: https://www.reddit.com/r/QuantumComputing/comments/1j498pc/to_a_layman_what_are_the_applications_of_quantum/
+2025-05-11 16:15:27 - Successfully scraped webpage, title: Reddit - The heart of the internet
+2025-05-11 16:15:27 - Scraping content from: https://ionq.com/resources/quantum-computing-101-introduction-evaluation-applications
+2025-05-11 16:15:27 - scrape_webpage called with URL: https://ionq.com/resources/quantum-computing-101-introduction-evaluation-applications
+2025-05-11 16:15:27 - Successfully scraped webpage, title: Quantum Computing 101: Introduction, Evaluation, and Applications
+2025-05-11 16:15:27 - Step 4: Ranking sources by similarity and credibility
+2025-05-11 16:15:27 - rank_sources called with query: what is quantum computing, 6 documents
+2025-05-11 16:15:29 - assign_credibility_score called with 6 URLs
+2025-05-11 16:15:35 - Successfully assigned credibility scores to 6 URLs
+2025-05-11 16:15:35 - resolve_conflicts called with 6 documents
+2025-05-11 16:15:35 - Checking for conflicts between documents
+2025-05-11 16:15:39 - Checking for conflicts between documents
+2025-05-11 16:15:43 - Checking for conflicts between documents
+2025-05-11 16:15:46 - Checking for conflicts between documents
+2025-05-11 16:15:50 - Checking for conflicts between documents
+2025-05-11 16:15:52 - Checking for conflicts between documents
+2025-05-11 16:15:56 - Checking for conflicts between documents
+2025-05-11 16:16:00 - Checking for conflicts between documents
+2025-05-11 16:16:04 - Checking for conflicts between documents
+2025-05-11 16:16:08 - Checking for conflicts between documents
+2025-05-11 16:16:10 - Checking for conflicts between documents
+2025-05-11 16:16:14 - Checking for conflicts between documents
+2025-05-11 16:16:18 - Checking for conflicts between documents
+2025-05-11 16:16:20 - Checking for conflicts between documents
+2025-05-11 16:16:22 - Checking for conflicts between documents
+2025-05-11 16:16:31 - After conflict resolution: 6 documents remain
+2025-05-11 16:16:31 - Successfully ranked 6 documents
+2025-05-11 16:16:31 - Step 5: Creating summary
+2025-05-11 16:16:31 - create_summary called with query: what is quantum computing, documents: 3
+2025-05-11 16:16:31 - Created prompt for summarization
+2025-05-11 16:16:41 - Created summary of length: 1532
+2025-05-11 16:16:41 - Saving results to search_results.json
+2025-05-11 16:16:41 - Successfully saved results to search_results.json
+2025-05-11 16:16:41 - Returning chat response with 6 ranked sources
+2025-05-11 16:17:06 - get_chat_response called with query: what is superposition?, history length: 1
+2025-05-11 16:17:06 - complete_search_pipeline called with query: what is superposition?, num_results: 5
+2025-05-11 16:17:06 - Step 1: Enhancing query
+2025-05-11 16:17:06 - enhance_query called with: what is superposition?
+2025-05-11 16:17:11 - Original query: what is superposition?
+2025-05-11 16:17:11 - Enhanced query: superposition principle physics quantum mechanics wave function
+2025-05-11 16:17:11 - Step 2: Performing Google search
+2025-05-11 16:17:11 - google_search called with query: superposition principle physics quantum mechanics wave function, num_results: 5
+2025-05-11 16:17:11 - Performing search with query: superposition principle physics quantum mechanics wave function
+2025-05-11 16:17:14 - Search completed, found 6 results
+2025-05-11 16:17:14 - Added result: https://scienceexchange.caltech.edu/topics/quantum-science-explained/quantum-superposition
+2025-05-11 16:17:14 - Added result: https://quantumatlas.umd.edu/entry/superposition/
+2025-05-11 16:17:14 - Added result: https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Quantum_Chemistry_with_Applications_in_Spectroscopy_(Fleming)/02%3A_Particle_in_a_Box/2.05%3A_Superposition_and_Completeness
+2025-05-11 16:17:14 - Added result: https://physics.stackexchange.com/questions/44004/what-does-superposition-mean-in-quantum-mechanics
+2025-05-11 16:17:14 - Added result: https://physics.stackexchange.com/questions/757650/what-actually-is-superposition
+2025-05-11 16:17:14 - Added result: https://physics.stackexchange.com/questions/152982/the-meaning-of-superposition
+2025-05-11 16:17:14 - Step 3: Extracting content from search results
+2025-05-11 16:17:14 - Scraping content from: https://scienceexchange.caltech.edu/topics/quantum-science-explained/quantum-superposition
+2025-05-11 16:17:14 - scrape_webpage called with URL: https://scienceexchange.caltech.edu/topics/quantum-science-explained/quantum-superposition
+2025-05-11 16:17:15 - Successfully scraped webpage, title: What Is Quantum Superposition?
+  
+
+     - 
+    
+    Caltech Science Exchange
+2025-05-11 16:17:15 - Scraping content from: https://quantumatlas.umd.edu/entry/superposition/
+2025-05-11 16:17:15 - scrape_webpage called with URL: https://quantumatlas.umd.edu/entry/superposition/
+2025-05-11 16:17:15 - Successfully scraped webpage, title: The Quantum Atlas | Quantum Superposition
+2025-05-11 16:17:15 - Scraping content from: https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Quantum_Chemistry_with_Applications_in_Spectroscopy_(Fleming)/02%3A_Particle_in_a_Box/2.05%3A_Superposition_and_Completeness
+2025-05-11 16:17:15 - scrape_webpage called with URL: https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Quantum_Chemistry_with_Applications_in_Spectroscopy_(Fleming)/02%3A_Particle_in_a_Box/2.05%3A_Superposition_and_Completeness
+2025-05-11 16:17:16 - Successfully scraped webpage, title: 2.5: Superposition and Completeness - Chemistry LibreTexts
+2025-05-11 16:17:16 - Scraping content from: https://physics.stackexchange.com/questions/44004/what-does-superposition-mean-in-quantum-mechanics
+2025-05-11 16:17:16 - scrape_webpage called with URL: https://physics.stackexchange.com/questions/44004/what-does-superposition-mean-in-quantum-mechanics
+2025-05-11 16:17:16 - Error in scrape_webpage: 403 Client Error: Forbidden for url: https://physics.stackexchange.com/questions/44004/what-does-superposition-mean-in-quantum-mechanics
+2025-05-11 16:17:16 - Scraping content from: https://physics.stackexchange.com/questions/757650/what-actually-is-superposition
+2025-05-11 16:17:16 - scrape_webpage called with URL: https://physics.stackexchange.com/questions/757650/what-actually-is-superposition
+2025-05-11 16:17:16 - Error in scrape_webpage: 403 Client Error: Forbidden for url: https://physics.stackexchange.com/questions/757650/what-actually-is-superposition
+2025-05-11 16:17:16 - Scraping content from: https://physics.stackexchange.com/questions/152982/the-meaning-of-superposition
+2025-05-11 16:17:16 - scrape_webpage called with URL: https://physics.stackexchange.com/questions/152982/the-meaning-of-superposition
+2025-05-11 16:17:16 - Error in scrape_webpage: 403 Client Error: Forbidden for url: https://physics.stackexchange.com/questions/152982/the-meaning-of-superposition
+2025-05-11 16:17:16 - Step 4: Ranking sources by similarity and credibility
+2025-05-11 16:17:16 - rank_sources called with query: what is superposition?, 3 documents
+2025-05-11 16:17:17 - assign_credibility_score called with 3 URLs
+2025-05-11 16:17:23 - Successfully assigned credibility scores to 3 URLs
+2025-05-11 16:17:23 - resolve_conflicts called with 3 documents
+2025-05-11 16:17:23 - Checking for conflicts between documents
+2025-05-11 16:17:27 - Checking for conflicts between documents
+2025-05-11 16:17:31 - Checking for conflicts between documents
+2025-05-11 16:17:35 - After conflict resolution: 3 documents remain
+2025-05-11 16:17:35 - Successfully ranked 3 documents
+2025-05-11 16:17:35 - Step 5: Creating summary
+2025-05-11 16:17:35 - create_summary called with query: what is superposition?, documents: 3
+2025-05-11 16:17:35 - Created prompt for summarization
+2025-05-11 16:17:45 - Created summary of length: 1520
+2025-05-11 16:17:45 - Saving results to search_results.json
+2025-05-11 16:17:45 - Successfully saved results to search_results.json
+2025-05-11 16:17:45 - Returning chat response with 3 ranked sources
