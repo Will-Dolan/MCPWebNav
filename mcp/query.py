@@ -1,33 +1,12 @@
 import json
-import torch
-from transformers import AutoTokenizer, AutoModel
-from sklearn.metrics.pairwise import cosine_similarity
+import os
+import anthropic
 
 class QueryProcessor:
-    def __init__(self, model_name='sentence-transformers/all-MiniLM-L6-v2'):
-        self.tokenizer, self.model = self.load_tokenizer_and_model(model_name)
+    def __init__(self, claude_client=None):
         self.conversation_history = []
+        self.client = claude_client
         
-    def load_tokenizer_and_model(self, name):
-        tokenizer = AutoTokenizer.from_pretrained(name)
-        model = AutoModel.from_pretrained(name)
-        return tokenizer, model
-    
-    def mean_pooling(self, model_output, attention_mask):
-        token_embeddings = model_output.last_hidden_state
-        input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size())
-        sum_embeddings = (token_embeddings * input_mask_expanded).sum(1)
-        sum_mask = input_mask_expanded.sum(1).clamp(min=1e-9)
-        mean_embeddings = sum_embeddings / sum_mask
-        return mean_embeddings
-    
-    def embed_text(self, text):
-        encoded_input = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
-        with torch.no_grad():
-            model_output = self.model(**encoded_input)
-            embedding = self.mean_pooling(model_output, encoded_input['attention_mask'])
-        return embedding
-    
     def extract_entities(self, query):
         # Simple entity extraction based on query keywords
         # In a production system, you would use spaCy or similar NLP libraries here
@@ -118,7 +97,6 @@ class QueryProcessor:
             return query
             
         # Get the most recent conversation
-        recent_query = self.conversation_history[-1]['query']
         recent_entities = self.conversation_history[-1]['entities']
         
         # Check if the current query is a follow-up
@@ -156,20 +134,97 @@ class QueryProcessor:
             
         return suggestions
     
-    def process_query(self, query, use_context=True):
-        # Main method to process a query
+    def enhance_query_with_claude(self, query):
+        """
+        Use Claude to enhance the search query by extracting key concepts
+        and reformulating it for better search results.
         
+        Args:
+            query: The original user query
+            
+        Returns:
+            Enhanced query string
+        """
+        if not self.client:
+            # If Claude client isn't available, return original query
+            return query
+            
+        prompt = f"""
+        Your task is to reformulate the following search query to make it more effective for web search.
+        
+        Original Query: "{query}"
+        
+        Please analyze this query and:
+        1. Identify the core information need
+        2. Extract key concepts and entities
+        3. Reformulate as a search-engine optimized query
+        4. Use "+" between terms for search engine compatibility
+        
+        For example:
+        - "What's the capital of France?" → "capital+of+France+Paris"
+        - "How do birds migrate?" → "bird+migration+how+navigation+seasons"
+        
+        Reply with ONLY the reformulated query, no other text.
+        """
+        
+        try:
+            response = self.client.messages.create(
+                model="claude-3-5-sonnet-20240620",
+                max_tokens=100,
+                temperature=0,
+                system="You are an AI assistant specialized in optimizing search queries. Your task is to reformulate user queries to be more effective for search engines.",
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            
+            enhanced_query = response.content[0].text.strip()
+            return enhanced_query
+            
+        except Exception as e:
+            # If there's an error with Claude, return the original query
+            return query
+    
+    def process_query(self, query, use_context=True, use_claude=True):
+        """
+        Main method to process a query with optional Claude enhancement
+        
+        Args:
+            query: The user's query
+            use_context: Whether to use conversation context
+            use_claude: Whether to use Claude for query enhancement
+            
+        Returns:
+            Query analysis dictionary
+        """
         # Handle context from previous conversations if enabled
         if use_context:
             enhanced_query = self.handle_context(query)
         else:
             enhanced_query = query
-            
-        # Extract entities and query type
-        entity_data = self.extract_entities(enhanced_query)
         
-        # Format the search query
-        search_query = self.format_search_query(entity_data)
+        # Use Claude to further enhance the query if requested
+        if use_claude and self.client:
+            claude_enhanced_query = self.enhance_query_with_claude(enhanced_query)
+            
+            # Prefer Claude's enhancement if available and different from original
+            if claude_enhanced_query and claude_enhanced_query != enhanced_query:
+                enhanced_query = claude_enhanced_query
+                
+                # Extract entities from Claude's enhanced query for better entity analysis
+                entity_data = self.extract_entities(enhanced_query)
+            else:
+                # If Claude didn't change the query, use our standard entity extraction
+                entity_data = self.extract_entities(enhanced_query)
+        else:
+            # Use standard entity extraction if not using Claude
+            entity_data = self.extract_entities(enhanced_query)
+        
+        # Format the search query - if Claude provided a "+" formatted query, use it directly
+        if use_claude and "+" in enhanced_query and not " " in enhanced_query.strip():
+            search_query = enhanced_query  # Claude already formatted it for search
+        else:
+            search_query = self.format_search_query(entity_data)
         
         # Determine search strategy
         strategy = self.determine_search_strategy(enhanced_query, entity_data)
@@ -177,14 +232,10 @@ class QueryProcessor:
         # Generate query refinement suggestions
         refinement_suggestions = self.suggest_refinements(enhanced_query, entity_data)
         
-        # Create embeddings for the query (for later similarity comparison)
-        query_embedding = self.embed_text([enhanced_query]).tolist()
-        
         # Store this query in conversation history
         self.conversation_history.append({
             'query': enhanced_query,
-            'entities': entity_data,
-            'embedding': query_embedding
+            'entities': entity_data
         })
         
         # Prepare final output
@@ -195,30 +246,7 @@ class QueryProcessor:
             'entity_data': entity_data,
             'search_strategy': strategy,
             'refinement_suggestions': refinement_suggestions,
-            'query_embedding': query_embedding
+            'claude_enhanced': use_claude and self.client is not None
         }
         
         return query_analysis
-
-
-def main():
-    # Example usage
-    processor = QueryProcessor()
-    
-    # Process a sample query
-    query = "What is quantum computing?"
-    result = processor.process_query(query)
-    
-    # Print the result
-    print(json.dumps(result, indent=2))
-    
-    # Process a follow-up query
-    follow_up = "How is it used in cryptography?"
-    result2 = processor.process_query(follow_up)
-    
-    # Print the follow-up result
-    print(json.dumps(result2, indent=2))
-
-
-if __name__ == '__main__':
-    main()

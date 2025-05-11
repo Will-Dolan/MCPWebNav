@@ -8,12 +8,15 @@ import json
 from googlesearch import search 
 import datetime
 from dotenv import load_dotenv
-from mcp.query import QueryProcessor
+from query import QueryProcessor  # Import the updated QueryProcessor
+
 load_dotenv()
 
 mcp = FastMCP("Web Navigation Server")
 client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
-query_processor = QueryProcessor()
+
+# Initialize QueryProcessor with the Claude client
+query_processor = QueryProcessor(claude_client=client)
 
 debug_file_path = os.path.join(os.getcwd(), "server_debug.txt")
 f = open(debug_file_path, "w")
@@ -61,9 +64,9 @@ def google_search(query: str, num_results: int = 5) -> list:
         # Setting pause to 2.0 to avoid getting blocked by Google
         search_results = list(search(
             query,
-            num=1,
+            num=num_results,
             start=1,
-            stop=5,
+            stop=num_results+1,
             lang="en",
             pause=2.0
         ))
@@ -291,51 +294,64 @@ def analyze_content(query: str, passages: list, links: list, passage_sources: li
         return {"error": f"Failed to analyze content: {str(e)}"}
     
 @mcp.tool()
-def process_query(query: str, use_context: bool = True) -> dict:
+def process_query(query: str, use_context: bool = True, use_claude: bool = True) -> dict:
     """
     Process a user query to enhance it for better search results.
 
     Args:
         query: The user's search query
         use_context: Whether to use conversation context (default: True)
+        use_claude: Whether to use Claude to enhance the query (default: True)
 
     Returns:
         Enhanced query analysis with search strategy and refinements
     """
-    debug_log(f"process_query called with: {query}, use_context: {use_context}")
+    debug_log(f"process_query called with: {query}, use_context: {use_context}, use_claude: {use_claude}")
 
     try:
-        # Process the query using QueryProcessor
-        query_analysis = query_processor.process_query(query, use_context)
+        # Process the query using QueryProcessor with Claude enhancement
+        query_analysis = query_processor.process_query(query, use_context, use_claude)
+        debug_log(f"Query processing successful. Claude enhanced: {query_analysis.get('claude_enhanced', False)}")
         return json.dumps(query_analysis)
     except Exception as e:
         debug_log(f"Error in process_query: {str(e)}")
         return json.dumps({"error": f"Query processing failed: {str(e)}"})
 
 @mcp.tool()
-def navigate_web(query: str, max_depth: int = 3) -> dict:
+def navigate_web(query: str, max_depth: int = 3, use_claude_for_query: bool = True) -> dict:
     """
     Run a complete web navigation cycle based on the user query.
     
     Args:
         query: The user's search query
         max_depth: Maximum exploration depth (default: 3)
+        use_claude_for_query: Whether to use Claude to enhance the query (default: True)
     
     Returns:
         Results of the web navigation including relevant content with source URLs
     """
+    debug_log(f"navigate_web called with: {query}, max_depth: {max_depth}, use_claude_for_query: {use_claude_for_query}")
+    
     # Process query first to enhance it
-    query_analysis_json = process_query(query)
+    debug_log(f"Original query: {query}")
+    query_analysis_json = process_query(query, use_context=True, use_claude=use_claude_for_query)
     query_analysis = json.loads(query_analysis_json)
 
     # Use the enhanced query if available, otherwise use original
-    search_query = query_analysis.get("search_query", query) if "error" not in query_analysis else query
-    debug_log(f"Using search query: {search_query}")
+    if "error" not in query_analysis:
+        search_query = query_analysis.get("search_query", query)
+        debug_log(f"Using search query: {search_query}")
+        
+        # Log if Claude enhanced the query
+        if query_analysis.get("claude_enhanced", False):
+            debug_log("Query was enhanced by Claude")
+    else:
+        search_query = query
+        debug_log(f"Using original query due to error: {query_analysis.get('error')}")
 
     # Start with Google search
     search_results = google_search(search_query)
     debug_log(f"Search results: {search_results}")
-    debug_log(f"Type of search results: {type(search_results)}")
     
     try:
         search_results_parsed = json.loads(search_results)
@@ -400,7 +416,7 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
         # Analyze content and decide next steps
         debug_log("Analyzing content")
         analysis = analyze_content(
-            query=query,
+            query=query,  # Use original query for relevance judgment
             passages=analysis_passages,
             links=scrape_result["links"],
             passage_sources=passage_sources
@@ -418,6 +434,9 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
             return {
                 "action": "extract",
                 "query": query,
+                "enhanced_query": query_analysis.get("enhanced_query", query),
+                "search_query": search_query,
+                "claude_enhanced": query_analysis.get("claude_enhanced", False),
                 "depth_reached": depth,
                 "visited_urls": list(visited_urls),
                 "current_url": next_link,
@@ -463,6 +482,9 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
         return {
             "action": "completed_with_extractions",
             "query": query,
+            "enhanced_query": query_analysis.get("enhanced_query", query),
+            "search_query": search_query,
+            "claude_enhanced": query_analysis.get("claude_enhanced", False),
             "depth_reached": depth,
             "visited_urls": list(visited_urls),
             "extracted_content": collected_extractions,
@@ -474,6 +496,9 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
         return {
             "action": "max_depth_reached",
             "query": query,
+            "enhanced_query": query_analysis.get("enhanced_query", query),
+            "search_query": search_query,
+            "claude_enhanced": query_analysis.get("claude_enhanced", False),
             "depth_reached": depth,
             "visited_urls": list(visited_urls),
             "collected_passages": collected_passages

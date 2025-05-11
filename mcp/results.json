@@ -3,9 +3,9 @@
   "query": "Python programming",
   "depth_reached": 3,
   "visited_urls": [
-    "https://www.python.org/",
     "https://en.wikipedia.org/wiki/Python_(programming_language)",
-    "https://www.w3schools.com/python/python_intro.asp"
+    "https://www.w3schools.com/python/python_intro.asp",
+    "https://www.python.org/"
   ],
   "extracted_content": [
     {
@@ -156,31 +156,17 @@
       }
     },
     {
-      "paragraph": "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.[33]",
+      "paragraph": "Python is a popular programming language. It was created by Guido van Rossum, \nand released in 1991.",
       "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
+        "url": "https://www.w3schools.com/python/python_intro.asp",
+        "title": "Introduction to Python"
       }
     },
     {
-      "paragraph": "Python is dynamically type-checked and garbage-collected. It supports multiple programming paradigms, including structured (particularly procedural), object-oriented and functional programming. It is often described as a \"batteries included\" language due to its comprehensive standard library.[34][35]",
+      "paragraph": "It is used for:",
       "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language, and he first released it in 1991 as Python\u00a00.9.0.[36] Python\u00a02.0 was released in 2000. Python\u00a03.0, released in 2008, was a major revision not completely backward-compatible with earlier versions. Python\u00a02.7.18, released in 2020, was the last release of Python\u00a02.[37]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python consistently ranks as one of the most popular programming languages, and it has gained widespread use in the machine learning community.[38][39][40][41]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
+        "url": "https://www.w3schools.com/python/python_intro.asp",
+        "title": "Introduction to Python"
       }
     },
     {
@@ -212,126 +198,28 @@
       }
     },
     {
-      "paragraph": "However, Python features regularly violate these principles and have received criticism for adding unnecessary language bloat.[85] Responses to these criticisms note that the Zen of Python is a guideline rather than a rule.[86] The addition of some new features had been controversial: Guido van Rossum resigned as Benevolent Dictator for Life after conflict about adding the assignment expression operator in Python 3.8.[87][88]",
+      "paragraph": "Functions are created in Python by using the def keyword. A function is defined similarly to how it is called, by first providing the function name and then the required parameters. Here is an example of a function that prints its inputs:",
       "source": {
         "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
         "title": "Python (programming language) - Wikipedia"
       }
     },
     {
-      "paragraph": "Nevertheless, rather than building all functionality into its core, Python was designed to be highly extensible via modules. This compact modularity has made it particularly popular as a means of adding programmable interfaces to existing applications. Van Rossum's vision of a small core language with a large standard library and easily extensible interpreter stemmed from his frustrations with ABC, which represented the opposite approach.[42]",
+      "paragraph": "To assign a default value to a function parameter in case no actual value is provided at run time, variable-definition syntax can be used inside the function header.",
       "source": {
         "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
         "title": "Python (programming language) - Wikipedia"
       }
     },
     {
-      "paragraph": "Python claims to strive for a simpler, less-cluttered syntax and grammar, while giving developers a choice in their coding methodology. In contrast to Perl's motto \"there is more than one way to do it\", Python advocates an approach where \"there should be one\u2014and preferably only one\u2014obvious way to do it.\".[84] In practice, however, Python provides many ways to achieve a given goal. There are, for example, at least three ways to format a string literal, with no certainty as to which one a programmer should use.[89] Alex Martelli is a Fellow at the Python Software Foundation and Python book author; he wrote that \"To describe something as 'clever' is not considered a compliment in the Python culture.\"[90]",
+      "paragraph": "\"Hello, World!\" program:",
       "source": {
         "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
         "title": "Python (programming language) - Wikipedia"
       }
     },
     {
-      "paragraph": "Python's developers usually try to avoid premature optimization; they also reject patches to non-critical parts of the CPython reference implementation that would offer marginal increases in speed at the cost of clarity.[91] Execution speed can be improved by moving speed-critical functions to extension modules written in languages such as C, or by using a just-in-time compiler like PyPy. It is also possible to cross-compile to other languages; but this approach either fails to achieve the expected speed-up, since Python is a very dynamic language, or only a restricted subset of Python is compiled (with potential minor semantic changes).[92]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python's developers aim for the language to be fun to use. This goal is reflected in the name\u2014a tribute to the British comedy group Monty Python[93]\u2014and in playful approaches to some tutorials and reference materials. For instance, some code examples use the terms \"spam\" and \"eggs\" (in reference to a Monty Python sketch), rather than the typical terms \"foo\" and \"bar\".[94][95] A common neologism in the Python community is pythonic, which has a wide range of meanings related to program style. Pythonic code may use Python idioms well; be natural or show fluency in the language; or conform with Python's minimalist philosophy and emphasis on readability.[96]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python is meant to be an easily readable language. Its formatting is visually uncluttered and often uses English keywords where other languages use punctuation. Unlike many other languages, it does not use curly brackets to delimit blocks, and semicolons after statements are allowed but rarely used. It has fewer syntactic exceptions and special cases than C or Pascal.[97]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python uses whitespace indentation, rather than curly brackets or keywords, to delimit blocks. An increase in indentation comes after certain statements; a decrease in indentation signifies the end of the current block.[98] Thus, the program's visual structure accurately represents its semantic structure.[99] This feature is sometimes termed the off-side rule. Some other languages use indentation this way; but in most, indentation has no semantic meaning. The recommended indent size is four spaces.[100]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python's statements include the following:",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "The assignment statement (=) binds a name as a reference to a separate, dynamically allocated object. Variables may subsequently be rebound at any time to any object. In Python, a variable name is a generic reference holder without a fixed data type; however, it always refers to some object with a type. This is called dynamic typing\u2014in contrast to statically-typed languages, where each variable may contain only a value of a certain type.",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python does not support tail call optimization or first-class continuations; according to Van Rossum, the language never will.[103][104] However, better support for coroutine-like functionality is provided by extending Python's generators.[105] Before 2.5, generators were lazy iterators; data was passed unidirectionally out of the generator. From Python\u00a02.5 on, it is possible to pass data back into a generator function; and from version 3.3, data can be passed through multiple stack levels.[106]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python's expressions include the following:",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "In Python, a distinction between expressions and statements is rigidly enforced, in contrast to languages such as Common Lisp, Scheme, or Ruby. This distinction leads to duplicating some functionality, for example:",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "A statement cannot be part of an expression; because of this restriction, expressions such as list and dict comprehensions (and lambda expressions) cannot contain statements. As a particular case, an assignment statement such as a = 1 cannot be part of the conditional expression of a conditional statement.",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Methods of objects are functions attached to the object's class; the syntax for normal methods and functions, instance.method(argument), is syntactic sugar for Class.method(instance, argument). Python methods have an explicit self parameter to access instance data, in contrast to the implicit self (or this) parameter in some object-oriented programming languages (e.g., C++, Java, Objective-C, Ruby).[115] Python also provides methods, often called dunder methods (because their names begin and end with double underscores); these methods allow user-defined classes to modify how they are handled by native operations including length, comparison, arithmetic, and type conversion.[116]",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python uses duck typing, and it has typed objects but untyped variable names. Type constraints are not checked at definition time; rather, operations on an object may fail at usage time, indicating that the object is not of an appropriate type. Despite being dynamically typed, Python is strongly typed, forbidding operations that are poorly defined (e.g., adding a number and a string) rather than quietly attempting to interpret them.",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python allows programmers to define their own types using classes, most often for object-oriented programming. New instances of classes are constructed by calling the class, for example, SpamClass() or EggsClass()); the classes are instances of the metaclass type (which is an instance of itself), thereby allowing metaprogramming and reflection.",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Before version 3.0, Python had two kinds of classes, both using the same syntax: old-style and new-style.[117] Current Python versions support the semantics of only the new style.",
-      "source": {
-        "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-        "title": "Python (programming language) - Wikipedia"
-      }
-    },
-    {
-      "paragraph": "Python supports optional type annotations.[4][118] These annotations are not enforced by the language, but may be used by external tools such as mypy to catch errors.[119][120] Mypy also supports a Python compiler called mypyc, which leverages type annotations for optimization.[121]",
+      "paragraph": "Program to calculate the factorial of a positive integer:",
       "source": {
         "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
         "title": "Python (programming language) - Wikipedia"

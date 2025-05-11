@@ -1,44 +1,50 @@
-2025-05-11 14:35:49 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
-2025-05-11 14:35:49 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
-2025-05-11 14:35:50 - google_search called with query: Python programming, num_results: 5
-2025-05-11 14:35:50 - Performing search with query: Python programming
-2025-05-11 14:36:01 - Search completed, found 5 results
-2025-05-11 14:36:01 - Added result: https://www.python.org/
-2025-05-11 14:36:01 - Added result: https://www.w3schools.com/python/python_intro.asp
-2025-05-11 14:36:01 - Added result: https://en.wikipedia.org/wiki/Python_(programming_language)
-2025-05-11 14:36:01 - Added result: https://www.youtube.com/watch?v=K5KVEU3aaeQ
-2025-05-11 14:36:01 - Added result: https://docs.python.org/3/tutorial/index.html
-2025-05-11 14:36:01 - Returning JSON string: [{"url": "https://www.python.org/"}, {"url": "https://www.w3schools.com/python/python_intro.asp"}, {"url": "https://en.wikipedia.org/wiki/Python_(programming_language)"}, {"url": "https://www.youtube.com/watch?v=K5KVEU3aaeQ"}, {"url": "https://docs.python.org/3/tutorial/index.html"}]
-2025-05-11 14:36:01 - Search results: [{"url": "https://www.python.org/"}, {"url": "https://www.w3schools.com/python/python_intro.asp"}, {"url": "https://en.wikipedia.org/wiki/Python_(programming_language)"}, {"url": "https://www.youtube.com/watch?v=K5KVEU3aaeQ"}, {"url": "https://docs.python.org/3/tutorial/index.html"}]
-2025-05-11 14:36:01 - Type of search results: <class 'str'>
-2025-05-11 14:36:01 - Current depth: 0
-2025-05-11 14:36:01 - Next link to explore: https://www.python.org/
-2025-05-11 14:36:01 - Remaining links: 4
-2025-05-11 14:36:01 - Scraping webpage: https://www.python.org/
-2025-05-11 14:36:01 - Added passage from https://www.python.org/, title: Welcome to Python.org
-2025-05-11 14:36:01 - Analyzing content
-2025-05-11 14:36:08 - Analysis result action: both
-2025-05-11 14:36:08 - Both extracting content and adding links to explore
-2025-05-11 14:36:08 - Adding 4 links to explore
-2025-05-11 14:36:08 - Current depth: 1
-2025-05-11 14:36:08 - Next link to explore: https://www.w3schools.com/python/python_intro.asp
-2025-05-11 14:36:08 - Remaining links: 7
-2025-05-11 14:36:08 - Scraping webpage: https://www.w3schools.com/python/python_intro.asp
-2025-05-11 14:36:17 - Added passage from https://www.w3schools.com/python/python_intro.asp, title: Introduction to Python
-2025-05-11 14:36:17 - Analyzing content
-2025-05-11 14:36:33 - Analysis result action: both
-2025-05-11 14:36:33 - Both extracting content and adding links to explore
-2025-05-11 14:36:33 - Adding 3 links to explore
-2025-05-11 14:36:33 - Current depth: 2
-2025-05-11 14:36:33 - Next link to explore: https://en.wikipedia.org/wiki/Python_(programming_language)
-2025-05-11 14:36:33 - Remaining links: 9
-2025-05-11 14:36:33 - Scraping webpage: https://en.wikipedia.org/wiki/Python_(programming_language)
-2025-05-11 14:36:34 - Added passage from https://en.wikipedia.org/wiki/Python_(programming_language), title: Python (programming language) - Wikipedia
-2025-05-11 14:36:34 - Analyzing content
-2025-05-11 14:36:47 - Analysis result action: both
-2025-05-11 14:36:47 - Both extracting content and adding links to explore
-2025-05-11 14:36:47 - Adding 8 links to explore
-2025-05-11 14:36:47 - Reached max depth or no more links
-2025-05-11 14:36:47 - Collected 47 extractions
-2025-05-11 14:36:47 - Visited 3 URLs
-2025-05-11 14:36:47 - Returning with collected extractions
+2025-05-11 14:58:51 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
+2025-05-11 14:58:51 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
+2025-05-11 14:58:53 - navigate_web called with: quantum computing, max_depth: 3, use_claude_for_query: True
+2025-05-11 14:58:53 - Original query: quantum computing
+2025-05-11 14:58:53 - process_query called with: quantum computing, use_context: True, use_claude: True
+2025-05-11 14:58:56 - Query processing successful. Claude enhanced: True
+2025-05-11 14:58:56 - Using search query: quantum+computing+explained+applications+latest+developments
+2025-05-11 14:58:56 - Query was enhanced by Claude
+2025-05-11 14:58:56 - google_search called with query: quantum+computing+explained+applications+latest+developments, num_results: 5
+2025-05-11 14:58:56 - Performing search with query: quantum+computing+explained+applications+latest+developments
+2025-05-11 14:59:02 - Search completed, found 6 results
+2025-05-11 14:59:02 - Added result: https://www.nist.gov/quantum-information-science/quantum-computing-explained
+2025-05-11 14:59:02 - Added result: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
+2025-05-11 14:59:02 - Added result: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
+2025-05-11 14:59:02 - Added result: https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423
+2025-05-11 14:59:02 - Added result: https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/
+2025-05-11 14:59:02 - Added result: https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/
+2025-05-11 14:59:02 - Returning JSON string: [{"url": "https://www.nist.gov/quantum-information-science/quantum-computing-explained"}, {"url": "https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology"}, {"url": "https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses"}, {"url": "https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423"}, {"url": "https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/"}, {"url": "https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/"}]
+2025-05-11 14:59:02 - Search results: [{"url": "https://www.nist.gov/quantum-information-science/quantum-computing-explained"}, {"url": "https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology"}, {"url": "https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses"}, {"url": "https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423"}, {"url": "https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/"}, {"url": "https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/"}]
+2025-05-11 14:59:02 - Current depth: 0
+2025-05-11 14:59:02 - Next link to explore: https://www.nist.gov/quantum-information-science/quantum-computing-explained
+2025-05-11 14:59:02 - Remaining links: 5
+2025-05-11 14:59:02 - Scraping webpage: https://www.nist.gov/quantum-information-science/quantum-computing-explained
+2025-05-11 14:59:02 - Added passage from https://www.nist.gov/quantum-information-science/quantum-computing-explained, title: Quantum Computing Explained | NIST
+2025-05-11 14:59:02 - Analyzing content
+2025-05-11 14:59:09 - Analysis result action: both
+2025-05-11 14:59:09 - Both extracting content and adding links to explore
+2025-05-11 14:59:09 - Adding 5 links to explore
+2025-05-11 14:59:09 - Current depth: 1
+2025-05-11 14:59:09 - Next link to explore: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
+2025-05-11 14:59:09 - Remaining links: 9
+2025-05-11 14:59:09 - Scraping webpage: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
+2025-05-11 14:59:10 - Added passage from https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology, title: World Quantum Day 2024: The latest developments in quantum science and technology | Pritzker School of Molecular Engineering | The University of Chicago
+2025-05-11 14:59:10 - Analyzing content
+2025-05-11 14:59:18 - Analysis result action: both
+2025-05-11 14:59:18 - Both extracting content and adding links to explore
+2025-05-11 14:59:18 - Adding 5 links to explore
+2025-05-11 14:59:18 - Current depth: 2
+2025-05-11 14:59:18 - Next link to explore: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
+2025-05-11 14:59:18 - Remaining links: 13
+2025-05-11 14:59:18 - Scraping webpage: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
+2025-05-11 14:59:18 - Added passage from https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses, title: Explore 7 future potential quantum computing uses | TechTarget
+2025-05-11 14:59:18 - Analyzing content
+2025-05-11 14:59:25 - Analysis result action: both
+2025-05-11 14:59:25 - Both extracting content and adding links to explore
+2025-05-11 14:59:25 - Adding 6 links to explore
+2025-05-11 14:59:25 - Reached max depth or no more links
+2025-05-11 14:59:25 - Collected 61 extractions
+2025-05-11 14:59:25 - Visited 3 URLs
+2025-05-11 14:59:25 - Returning with collected extractions
