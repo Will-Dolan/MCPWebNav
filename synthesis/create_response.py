@@ -10,8 +10,9 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # System-related parameters
 TEMPERATURE = 0.1
 SYSTEM_PROMPT = '''
-You are a helpful assistant that summarizes multiple documents in order to answer a user's query. Answer the query to the
-best of your understanding. Do not include external information or make up facts. Only include the answer.
+You are a helpful assistant that summarizes multiple documents in order to answer a user's query. The similarity scores
+and credibility scores for each document are also provided. Answer the query to the best of your understanding. Do not 
+include external information or make up facts. Only include the answer.
 '''
 
 
@@ -23,6 +24,10 @@ def extract_top_n_documents(json_ranked_data, top_n):
     # Build up the documents list
     documents = []
 
+    # Build up similarity and credibility scores
+    similarity_scores = []
+    credibility_scores = []
+
     # Iterate through ranked documents (will work even if top_n > len(ranked_doc_indices))
     for index in ranked_doc_indices:
         # Extract the document's text
@@ -31,20 +36,24 @@ def extract_top_n_documents(json_ranked_data, top_n):
         # Add to document list
         documents.append(text)
 
+        # Add to scores lists
+        similarity_scores.append(json_ranked_data['data'][index]['similarity'])
+        credibility_scores.append(json_ranked_data['data'][index]['credibility'])
+
         # Check for top n condition
         if len(documents) == top_n:
             break
     
     # Return the documents
-    return documents
+    return documents, similarity_scores, credibility_scores
 
 
 # Helper function to create the prompt for Claude
-def create_claude_prompt(query, top_n_documents):
+def create_claude_prompt(query, top_n_documents, similarity_scores, credibility_scores):
     # Create the prompt
     prompt = ''
     for i, doc in enumerate(top_n_documents):
-        prompt += f'Document {i+1}:\n{doc}\n\n'
+        prompt += f'Document {i+1} (sim score = {similarity_scores[i]:.2f}, credibility score = {credibility_scores[i]}) :\n{doc}\n\n'
     prompt += f'Query: {query}\n\n'
     prompt += 'Answer the query by summarizing information from the documents above.'
 
@@ -86,11 +95,11 @@ def create_response_main():
 
     # Extract top 5 documents from the data
     top_n = 5
-    top_n_documents = extract_top_n_documents(json_ranked_data, top_n)
+    top_n_documents, similarity_scores, credibility_scores = extract_top_n_documents(json_ranked_data, top_n)
 
     # Create the prompt for Claude given the query and top N documents
     query = json_ranked_data['query']
-    prompt = create_claude_prompt(query, top_n_documents)
+    prompt = create_claude_prompt(query, top_n_documents, similarity_scores, credibility_scores)
 
     print(f'Prompt:\n{prompt}\n')
 

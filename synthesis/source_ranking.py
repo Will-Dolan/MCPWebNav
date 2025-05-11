@@ -2,7 +2,14 @@ import json
 from transformers import AutoTokenizer, AutoModel
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
+import os
+from dotenv import load_dotenv
+import anthropic
 
+TEMPERATURE = 0.1
+SYSTEM_PROMPT = '''
+You are a helpful assistant that measures the credibility scores of URLs. Only respond with the scores in JSON format.
+'''
 
 # Load in the JSON file and return the data
 def load_json(filepath):
@@ -16,6 +23,51 @@ def load_tokenizer_and_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name)
     model = AutoModel.from_pretrained(name)
     return tokenizer, model
+
+
+# Function to assign a credibility score to a list of URLs
+def assign_credibility_score(urls):
+    # Prompt for Claude
+    prompt = f"Assign a credibility score (0.00-1.00) to the following URLs based on the credibility of the website, where 1.00 is most credible:\n{urls}\n\n"
+    prompt += "Return a JSON object with the URL as the key and the score as the value."
+
+     # Load environment variables from .env file
+    load_dotenv()
+
+    # Get the API key from the environment variable
+    api_key = os.getenv('ANTHROPIC_API_KEY')
+
+    # Create and return the Anthropic client
+    client = anthropic.Anthropic(api_key=api_key)
+
+    # Query Claude
+    response = client.messages.create(
+        model='claude-3-7-sonnet-latest',
+        max_tokens=1024,
+        temperature=TEMPERATURE,
+        system=SYSTEM_PROMPT,
+        messages=[
+            {'role': 'user', 'content': prompt},
+        ]
+    )
+
+    response = response.content[0].text
+
+    response = response.strip("`").strip()
+    if response.startswith("json"):
+        response = response[4:].strip()
+
+
+    # Extract the credibility scores from the response
+    try:
+        credibility_scores = json.loads(response)
+    except json.JSONDecodeError:
+        print(f"Error decoding JSON response: {response}")
+        credibility_scores = {}
+    # Print the credibility scores
+    # print(f'Credibility Scores:\n{credibility_scores}')
+
+    return credibility_scores
 
 
 # Helper function to perform mean pooling on the model output
@@ -110,6 +162,20 @@ def source_ranking_main(data_file_path=None, print_results=True):
     # Print out ranking results
     if print_results:
         print_ranking_results(json_data)
+
+    # Assign credibility scores to the URLs
+    urls = [item['url'] for item in json_data['data']]
+    credibilities_json = assign_credibility_score(urls)
+
+    # Add credibility scores to the JSON data
+    for i, doc_item in enumerate(json_data['data']):
+        url = doc_item['url']
+        if url in credibilities_json:
+            doc_item['credibility'] = credibilities_json[url]
+        else:
+            doc_item['credibility'] = None
+
+    # print(json_data)
 
     # Return the JSON data
     return json_data
