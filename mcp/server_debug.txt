@@ -1,9 +1,44 @@
-2025-05-09 23:36:01 - Server starting up. Debug log at: /home/will/USCCS/itp459/MCPWebNav/mcp/server_debug.txt
-2025-05-09 23:36:01 - Current working directory: /home/will/USCCS/itp459/MCPWebNav/mcp
-2025-05-09 23:36:05 - google_search called with query: quantum, num_results: 5
-2025-05-09 23:36:05 - Performing search with query: quantum
-2025-05-09 23:36:07 - Search completed, found 0 results
-2025-05-09 23:36:07 - Returning JSON string: []
-2025-05-09 23:36:07 - []
-2025-05-09 23:36:07 - <class 'str'>
-2025-05-09 23:36:07 - [
+2025-05-11 14:35:49 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
+2025-05-11 14:35:49 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
+2025-05-11 14:35:50 - google_search called with query: Python programming, num_results: 5
+2025-05-11 14:35:50 - Performing search with query: Python programming
+2025-05-11 14:36:01 - Search completed, found 5 results
+2025-05-11 14:36:01 - Added result: https://www.python.org/
+2025-05-11 14:36:01 - Added result: https://www.w3schools.com/python/python_intro.asp
+2025-05-11 14:36:01 - Added result: https://en.wikipedia.org/wiki/Python_(programming_language)
+2025-05-11 14:36:01 - Added result: https://www.youtube.com/watch?v=K5KVEU3aaeQ
+2025-05-11 14:36:01 - Added result: https://docs.python.org/3/tutorial/index.html
+2025-05-11 14:36:01 - Returning JSON string: [{"url": "https://www.python.org/"}, {"url": "https://www.w3schools.com/python/python_intro.asp"}, {"url": "https://en.wikipedia.org/wiki/Python_(programming_language)"}, {"url": "https://www.youtube.com/watch?v=K5KVEU3aaeQ"}, {"url": "https://docs.python.org/3/tutorial/index.html"}]
+2025-05-11 14:36:01 - Search results: [{"url": "https://www.python.org/"}, {"url": "https://www.w3schools.com/python/python_intro.asp"}, {"url": "https://en.wikipedia.org/wiki/Python_(programming_language)"}, {"url": "https://www.youtube.com/watch?v=K5KVEU3aaeQ"}, {"url": "https://docs.python.org/3/tutorial/index.html"}]
+2025-05-11 14:36:01 - Type of search results: <class 'str'>
+2025-05-11 14:36:01 - Current depth: 0
+2025-05-11 14:36:01 - Next link to explore: https://www.python.org/
+2025-05-11 14:36:01 - Remaining links: 4
+2025-05-11 14:36:01 - Scraping webpage: https://www.python.org/
+2025-05-11 14:36:01 - Added passage from https://www.python.org/, title: Welcome to Python.org
+2025-05-11 14:36:01 - Analyzing content
+2025-05-11 14:36:08 - Analysis result action: both
+2025-05-11 14:36:08 - Both extracting content and adding links to explore
+2025-05-11 14:36:08 - Adding 4 links to explore
+2025-05-11 14:36:08 - Current depth: 1
+2025-05-11 14:36:08 - Next link to explore: https://www.w3schools.com/python/python_intro.asp
+2025-05-11 14:36:08 - Remaining links: 7
+2025-05-11 14:36:08 - Scraping webpage: https://www.w3schools.com/python/python_intro.asp
+2025-05-11 14:36:17 - Added passage from https://www.w3schools.com/python/python_intro.asp, title: Introduction to Python
+2025-05-11 14:36:17 - Analyzing content
+2025-05-11 14:36:33 - Analysis result action: both
+2025-05-11 14:36:33 - Both extracting content and adding links to explore
+2025-05-11 14:36:33 - Adding 3 links to explore
+2025-05-11 14:36:33 - Current depth: 2
+2025-05-11 14:36:33 - Next link to explore: https://en.wikipedia.org/wiki/Python_(programming_language)
+2025-05-11 14:36:33 - Remaining links: 9
+2025-05-11 14:36:33 - Scraping webpage: https://en.wikipedia.org/wiki/Python_(programming_language)
+2025-05-11 14:36:34 - Added passage from https://en.wikipedia.org/wiki/Python_(programming_language), title: Python (programming language) - Wikipedia
+2025-05-11 14:36:34 - Analyzing content
+2025-05-11 14:36:47 - Analysis result action: both
+2025-05-11 14:36:47 - Both extracting content and adding links to explore
+2025-05-11 14:36:47 - Adding 8 links to explore
+2025-05-11 14:36:47 - Reached max depth or no more links
+2025-05-11 14:36:47 - Collected 47 extractions
+2025-05-11 14:36:47 - Visited 3 URLs
+2025-05-11 14:36:47 - Returning with collected extractions

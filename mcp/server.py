@@ -17,9 +17,9 @@ debug_file_path = os.path.join(os.getcwd(), "server_debug.txt")
 f = open(debug_file_path, "w")
 
 def debug_log(message):
-	timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	f.write(f"{timestamp} - {message}\n")
-	f.flush()
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    f.write(f"{timestamp} - {message}\n")
+    f.flush()
 
 # Log at startup
 debug_log(f"Server starting up. Debug log at: {debug_file_path}")
@@ -68,7 +68,7 @@ def google_search(query: str, num_results: int = 5) -> list:
         return result_json
         
     except Exception as e:
-        debug_log(f"Error in google_search: {str(e)}", exc_info=True)
+        debug_log(f"Error in google_search: {str(e)}")
         return json.dumps([{"error": f"Search failed: {str(e)}"}])
     
 @mcp.tool()
@@ -102,11 +102,8 @@ def scrape_webpage(url: str) -> dict:
         
         # Extract links
         links = []
-        for link in soup.find_all('a', href=True):
-            debug_log('here')
-            
+        for link in soup.find_all('a', href=True):            
             href = link['href']
-            debug_log('here')
             
             # Convert relative URLs to absolute
             if href.startswith('/'):
@@ -133,32 +130,54 @@ def scrape_webpage(url: str) -> dict:
         return {"error": f"Failed to scrape webpage: {str(e)}"}
     
 @mcp.tool()
-def analyze_content(query: str, passages: list, links: list) -> dict:
+def analyze_content(query: str, passages: list, links: list, passage_sources: list = None) -> dict:
     """
     Analyze content in relation to the user query and decide whether to explore more links
-    or extract relevant information.
+    or extract relevant information, or both.
     
     Args:
         query: The user's original query
         passages: List of text passages from scraped content
         links: List of available links that could be explored
+        passage_sources: List of source information for each passage (optional)
     
     Returns:
-        Decision dictionary with action ('explore' or 'extract') and supporting data
+        Decision dictionary with action ('explore', 'extract', or 'both') and supporting data
+        including exact paragraphs extracted from the original text with their source URLs
     """
     # Format the content for Claude
     context = "\n\n".join(passages)
     links_text = "\n".join([f"{i+1}. {link['text']} - {link['url']}" for i, link in enumerate(links)])
     
+    # Break the content into paragraphs for easier reference
+    all_paragraphs = []
+    paragraph_sources = []  # Track the source of each paragraph
+    
+    for i, passage in enumerate(passages):
+        # Split each passage into paragraphs (sequences separated by double newlines)
+        paragraphs = [p.strip() for p in passage.split("\n\n") if p.strip()]
+        all_paragraphs.extend(paragraphs)
+        
+        # If passage_sources is provided, associate each paragraph with its source
+        if passage_sources and i < len(passage_sources):
+            paragraph_sources.extend([passage_sources[i]] * len(paragraphs))
+        else:
+            # Default empty source if not provided
+            paragraph_sources.extend([{"url": "unknown", "title": "Unknown Source"}] * len(paragraphs))
+    
+    # Create a reference index of paragraphs for Claude
+    paragraphs_text = "\n\n".join([f"[{i}] {p}" for i, p in enumerate(all_paragraphs)])
+    
     prompt = f"""
     Your task is to analyze content in relation to a user's query and decide whether to:
     1. Explore more links to find better information
     2. Extract relevant information from the current content
+    3. Both extract relevant information AND explore more links
     
     USER QUERY: {query}
     
     CONTENT:
-    {context}
+    {paragraphs_text}
     
     AVAILABLE LINKS:
     {links_text}
@@ -166,19 +185,32 @@ def analyze_content(query: str, passages: list, links: list) -> dict:
     Based on the above, decide if we should:
     - EXPLORE: If the current content doesn't sufficiently answer the query, and there are promising links
     - EXTRACT: If the current content contains information relevant to the query
+    - BOTH: If the current content contains some relevant information but exploring additional links would provide more complete information
     
-    If EXPLORE, specify which links (by number) should be explored next and why.
-    If EXTRACT, specify which parts of the content are most relevant to the query.
+    If EXPLORE or BOTH, specify which links (by number) should be explored next and why.
     
-    DECISION:
+    If EXTRACT or BOTH, identify the exact paragraphs that contain relevant information by referring to their paragraph numbers like [0], [1], etc.
+    
+    Your response must follow this JSON format:
+    ```json
+    {{
+        "decision": "EXPLORE|EXTRACT|BOTH",
+        "explanation": "Your reasoning for the decision",
+        "links_to_explore": [1, 2, 3],  // Only include if decision is EXPLORE or BOTH, list link numbers to explore
+        "relevant_paragraphs": [0, 5, 9],  // Only include if decision is EXTRACT or BOTH, list paragraph numbers
+        "summary": "A brief summary of the relevant information found"  // Only include if decision is EXTRACT or BOTH
+    }}
+    ```
+    
+    Only respond with valid JSON in the exact format specified above. No other text outside the JSON block.
     """
     
     try:
         response = client.messages.create(
             model="claude-3-5-sonnet-20240620",
-            max_tokens=1000,
+            max_tokens=1500,
             temperature=0,
-            system="You are an AI assistant helping with web research. Your task is to analyze content and decide whether to explore more links or extract relevant information.",
+            system="You are an AI assistant helping with web research. Your task is to analyze content and decide whether to explore more links or extract relevant information or both. You must respond with properly formatted JSON.",
             messages=[
                 {"role": "user", "content": prompt}
             ]
@@ -186,26 +218,63 @@ def analyze_content(query: str, passages: list, links: list) -> dict:
         
         decision_text = response.content[0].text
         
-        # Parse the decision
-        if "EXPLORE" in decision_text:
-            # Extract link numbers if possible
-            import re
-            link_numbers = re.findall(r'link(?:s)? (?:number )?(\d+)', decision_text.lower())
-            links_to_explore = [links[int(num)-1] for num in link_numbers if int(num) <= len(links)]
-            
+        # Extract the JSON string from the response, removing any markdown code block decorators
+        json_str = decision_text.strip()
+        if json_str.startswith("```json"):
+            json_str = json_str[7:]
+        if json_str.endswith("```"):
+            json_str = json_str[:-3]
+        
+        json_str = json_str.strip()
+        
+        # Parse the JSON response
+        decision_data = json.loads(json_str)
+        
+        # Extract relevant paragraphs text if specified, along with their sources
+        extracted_paragraphs_with_sources = []
+        if "relevant_paragraphs" in decision_data and decision_data["relevant_paragraphs"]:
+            for idx in decision_data["relevant_paragraphs"]:
+                if idx < len(all_paragraphs):
+                    extracted_paragraphs_with_sources.append({
+                        "paragraph": all_paragraphs[idx],
+                        "source": paragraph_sources[idx] if idx < len(paragraph_sources) else {"url": "unknown", "title": "Unknown Source"}
+                    })
+        
+        # Prepare links to explore if specified
+        if "links_to_explore" in decision_data and decision_data["links_to_explore"]:
+            links_to_explore = [links[idx-1] for idx in decision_data["links_to_explore"] if 0 < idx <= len(links)]
+        else:
+            links_to_explore = []
+        
+        decision = decision_data.get("decision", "").upper()
+        
+        # Format the result based on the decision
+        if decision == "BOTH":
+            return {
+                "action": "both",
+                "links_to_explore": links_to_explore,
+                "extracted_paragraphs": extracted_paragraphs_with_sources,
+                "paragraph_indices": decision_data.get("relevant_paragraphs", []),
+                "summary": decision_data.get("summary", ""),
+                "reasoning": decision_data.get("explanation", "")
+            }
+        elif decision == "EXPLORE":
             return {
                 "action": "explore",
                 "links_to_explore": links_to_explore,
-                "reasoning": decision_text
+                "reasoning": decision_data.get("explanation", "")
             }
-        else:
+        else:  # EXTRACT
             return {
                 "action": "extract",
-                "relevant_content": decision_text,
-                "reasoning": decision_text
+                "extracted_paragraphs": extracted_paragraphs_with_sources,
+                "paragraph_indices": decision_data.get("relevant_paragraphs", []),
+                "summary": decision_data.get("summary", ""),
+                "reasoning": decision_data.get("explanation", "")
             }
             
     except Exception as e:
+        debug_log(f"Error in analyze_content: {str(e)}")
         return {"error": f"Failed to analyze content: {str(e)}"}
     
 @mcp.tool()
@@ -218,85 +287,154 @@ def navigate_web(query: str, max_depth: int = 3) -> dict:
         max_depth: Maximum exploration depth (default: 3)
     
     Returns:
-        Results of the web navigation including relevant content
+        Results of the web navigation including relevant content with source URLs
     """
     # Start with Google search
     search_results = google_search(query)
-    debug_log(search_results)
-    debug_log(type(search_results))
+    debug_log(f"Search results: {search_results}")
+    debug_log(f"Type of search results: {type(search_results)}")
     
-    if not search_results or "error" in search_results[0]:
-        return {"error": "Failed to get initial search results"}
+    try:
+        search_results_parsed = json.loads(search_results)
+        if not search_results_parsed or "error" in search_results_parsed[0]:
+            return {"error": "Failed to get initial search results"}
+    except Exception as e:
+        debug_log(f"Error parsing search results: {str(e)}")
+        return {"error": f"Failed to parse search results: {str(e)}"}
     
     # Initialize tracking variables
     depth = 0
     visited_urls = set()
-    collected_passages = []
-    current_links = search_results
+    collected_passages = []  # Will store dicts with URL and content
+    collected_extractions = []  # For storing extracted relevant content
+    current_links = search_results_parsed
     
     # Main navigation loop
     while depth < max_depth:
         # If we have no more links to explore, end the cycle
         if not current_links:
+            debug_log("No more links to explore")
             break
         
-        # Choose the next link to explore (in a more sophisticated implementation,
-        # you might use Claude to prioritize which link to explore next)
-        debug_log(current_links[0])
+        # Choose the next link to explore
+        debug_log(f"Current depth: {depth}")
         next_link = current_links[0]["url"]
+        debug_log(f"Next link to explore: {next_link}")
         current_links = current_links[1:]  # Remove the link we're about to explore
+        debug_log(f"Remaining links: {len(current_links)}")
         
         # Skip if we've already visited this URL
         if next_link in visited_urls:
+            debug_log(f"Skipping already visited URL: {next_link}")
             continue
             
         visited_urls.add(next_link)
         
         # Scrape the webpage
-        debug_log(next_link)
+        debug_log(f"Scraping webpage: {next_link}")
         scrape_result = scrape_webpage(next_link)
         
         if "error" in scrape_result:
+            debug_log(f"Error scraping webpage: {scrape_result['error']}")
             continue
         
-        # Add content to collected passages
-        collected_passages.append(scrape_result["text_content"])
+        # Add content to collected passages with URL information
+        current_passage = {
+            "url": next_link,
+            "title": scrape_result["title"],
+            "content": scrape_result["text_content"]
+        }
+        collected_passages.append(current_passage)
+        debug_log(f"Added passage from {next_link}, title: {scrape_result['title']}")
+        
+        # For analysis, we'll use all scraped content
+        # Extract just the text content for analysis
+        analysis_passages = [p["content"] for p in collected_passages]
+        
+        # Also pass the source information for each passage
+        passage_sources = [{"url": p["url"], "title": p["title"]} for p in collected_passages]
         
         # Analyze content and decide next steps
+        debug_log("Analyzing content")
         analysis = analyze_content(
             query=query,
-            passages=collected_passages,
-            links=scrape_result["links"]
+            passages=analysis_passages,
+            links=scrape_result["links"],
+            passage_sources=passage_sources
         )
         
         if "error" in analysis:
+            debug_log(f"Error in content analysis: {analysis['error']}")
             continue
         
-        # If Claude decides to extract, return the results
+        debug_log(f"Analysis result action: {analysis['action']}")
+        
+        # If Claude decides to extract only, return the results
         if analysis["action"] == "extract":
+            debug_log("Returning extraction results")
             return {
                 "action": "extract",
                 "query": query,
                 "depth_reached": depth,
                 "visited_urls": list(visited_urls),
-                "extracted_content": analysis["relevant_content"]
+                "current_url": next_link,
+                "current_title": scrape_result["title"],
+                "extracted_paragraphs": analysis.get("extracted_paragraphs", []),
+                "summary": analysis.get("summary", ""),
+                "reasoning": analysis.get("reasoning", ""),
+                "collected_passages": collected_passages
             }
         
-        # Otherwise, add new links to explore
+        # If Claude decides to both extract and explore
+        elif analysis["action"] == "both":
+            debug_log("Both extracting content and adding links to explore")
+            # Add the extracted content to our collection
+            collected_extractions.extend(analysis.get("extracted_paragraphs", []))
+            
+            # Add new links to explore
+            if analysis.get("links_to_explore"):
+                debug_log(f"Adding {len(analysis['links_to_explore'])} links to explore")
+                current_links.extend(analysis["links_to_explore"])
+            else:
+                debug_log("No additional links to explore")
+        
+        # Otherwise, just add new links to explore
         elif analysis["action"] == "explore":
-            current_links.extend(analysis["links_to_explore"])
+            if analysis.get("links_to_explore"):
+                debug_log(f"Adding {len(analysis['links_to_explore'])} links to explore")
+                current_links.extend(analysis["links_to_explore"])
+            else:
+                debug_log("No additional links to explore")
         
         # Increment depth
         depth += 1
     
-    # If we've reached max depth or run out of links, return what we have
-    return {
-        "action": "max_depth_reached",
-        "query": query,
-        "depth_reached": depth,
-        "visited_urls": list(visited_urls),
-        "collected_passages": collected_passages
-    }
+    # If we've reached max depth or run out of links
+    debug_log("Reached max depth or no more links")
+    debug_log(f"Collected {len(collected_extractions)} extractions")
+    debug_log(f"Visited {len(visited_urls)} URLs")
+    
+    # If we collected any extractions, return those
+    if collected_extractions:
+        debug_log("Returning with collected extractions")
+        return {
+            "action": "completed_with_extractions",
+            "query": query,
+            "depth_reached": depth,
+            "visited_urls": list(visited_urls),
+            "extracted_content": collected_extractions,
+            "collected_passages": collected_passages
+        }
+    # Otherwise return what we have
+    else:
+        debug_log("Returning max depth reached with collected passages")
+        return {
+            "action": "max_depth_reached",
+            "query": query,
+            "depth_reached": depth,
+            "visited_urls": list(visited_urls),
+            "collected_passages": collected_passages
+        }
 
 if __name__ == "__main__":
     mcp.run(transport='stdio')

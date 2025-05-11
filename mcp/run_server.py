@@ -4,6 +4,7 @@ import sys
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import json
+from collections import defaultdict
 
 async def main():
     print("Starting Web Navigation Client...")
@@ -32,114 +33,114 @@ async def main():
             search_query = input("Enter your search query: ") or "Python programming"
             print(f"\nSearching for: {search_query}")
             
-            # Option to use navigation tool directly or execute step by step
-            use_navigation = input("Use full navigation? (y/n, default: y): ").lower() != "n"
+            # Use the navigate_web tool to handle the entire process
+            print("\nRunning complete web navigation...")
+            navigation_results = await session.call_tool("navigate_web", {
+                "query": search_query,
+                "max_depth": 3
+            })
             
-            if use_navigation:
-                # Use the navigate_web tool to handle the entire process
-                print("\nRunning complete web navigation...")
-                navigation_results = await session.call_tool("navigate_web", {
-                    "query": search_query,
-                    "max_depth": 3
-                })
-                
-                if navigation_results.isError:
-                    print(f"Error in navigation: {navigation_results.content[0].text if navigation_results.content else 'No content'}")
-                else:
-                    try:
-                        nav_data = json.loads(navigation_results.content[0].text)
-                        
-                        print("\n===== NAVIGATION RESULTS =====")
-                        print(f"Action: {nav_data.get('action')}")
-                        print(f"Query: {nav_data.get('query')}")
-                        print(f"Depth reached: {nav_data.get('depth_reached')}")
-                        print(f"Visited URLs: {len(nav_data.get('visited_urls', []))} pages")
-                        
-                        if nav_data.get('action') == 'extract':
-                            print("\n===== EXTRACTED CONTENT =====")
-                            print(nav_data.get('extracted_content'))
-                        else:
-                            # If we reached max depth without extracting
-                            print("\n===== COLLECTED PASSAGES =====")
-                            for i, passage in enumerate(nav_data.get('collected_passages', [])):
-                                print(f"\nPassage {i+1} (excerpt):")
-                                # Print only a brief excerpt of each passage
-                                print(passage[:300] + "..." if len(passage) > 300 else passage)
-                        
-                    except json.JSONDecodeError:
-                        print(f"Raw content (not JSON): {navigation_results.content[0].text}")
+            if navigation_results.isError:
+                print(f"Error in navigation: {navigation_results.content[0].text if navigation_results.content else 'No content'}")
             else:
-                # Execute step-by-step process
-                
-                # Step 1: Search for URLs
-                print("\nStep 1: Searching for relevant URLs...")
-                search_results = await session.call_tool("google_search", {"query": search_query})
-                
-                if search_results.isError:
-                    print(f"Error in search: {search_results.content[0].text if search_results.content else 'No content'}")
-                    return
-                
-                search_data = json.loads(search_results.content[0].text)
-                if not search_data or "error" in search_data[0]:
-                    print(f"Error in search results: {search_data[0].get('error', 'Unknown error')}")
-                    return
-                
-                print(f"Found {len(search_data)} URLs:")
-                for i, result in enumerate(search_data):
-                    print(f"{i+1}. {result.get('url')}")
-                
-                # Step 2: Scrape the first URL
-                if not search_data:
-                    print("No URLs found to scrape.")
-                    return
-                
-                url_to_scrape = search_data[0].get('url')
-                print(f"\nStep 2: Scraping webpage: {url_to_scrape}")
-                
-                scrape_results = await session.call_tool("scrape_webpage", {"url": url_to_scrape})
-                
-                if scrape_results.isError:
-                    print(f"Error in scraping: {scrape_results.content[0].text if scrape_results.content else 'No content'}")
-                    return
-                
-                scrape_data = json.loads(scrape_results.content[0].text)
-                if "error" in scrape_data:
-                    print(f"Error in scrape results: {scrape_data.get('error')}")
-                    return
-                
-                print(f"Scraped page title: {scrape_data.get('title')}")
-                print(f"Content length: {len(scrape_data.get('text_content', ''))} characters")
-                print(f"Found {len(scrape_data.get('links', []))} links on the page")
-                
-                # Step 3: Analyze the content
-                print("\nStep 3: Analyzing content...")
-                
-                # Prepare passages and links for analysis
-                passages = [scrape_data.get('text_content', '')]
-                links = scrape_data.get('links', [])
-                
-                analysis_results = await session.call_tool("analyze_content", {
-                    "query": search_query,
-                    "passages": passages,
-                    "links": links
-                })
-                
-                if analysis_results.isError:
-                    print(f"Error in analysis: {analysis_results.content[0].text if analysis_results.content else 'No content'}")
-                    return
-                
-                analysis_data = json.loads(analysis_results.content[0].text)
-                
-                print("\n===== ANALYSIS RESULTS =====")
-                print(f"Decision: {analysis_data.get('action')}")
-                
-                if analysis_data.get('action') == 'explore':
-                    print("\nSuggested links to explore:")
-                    for i, link in enumerate(analysis_data.get('links_to_explore', [])):
-                        print(f"{i+1}. {link.get('text', 'No text')}: {link.get('url')}")
-                else:
-                    print("\nRelevant content:")
-                    print(analysis_data.get('relevant_content'))
+                try: 
+                    nav_data = json.loads(navigation_results.content[0].text)
+                    
+                    print("\n===== NAVIGATION RESULTS =====")
+                    print(f"Action: {nav_data.get('action')}")
+                    print(f"Query: {nav_data.get('query')}")
+                    print(f"Depth reached: {nav_data.get('depth_reached')}")
+                    print(f"Visited URLs: {len(nav_data.get('visited_urls', []))} pages")
+                    
+                    # Handle different action types
+                    if nav_data.get('action') == 'extract':
+                        print("\n===== EXTRACTED CONTENT =====")
+                        if 'summary' in nav_data and nav_data['summary']:
+                            print("\nSUMMARY:")
+                            print(nav_data['summary'])
+                        
+                        # Group extracted paragraphs by URL
+                        paragraphs_by_url = defaultdict(list)
+                        for para_data in nav_data.get('extracted_paragraphs', []):
+                            url = para_data.get('source', {}).get('url', 'unknown')
+                            title = para_data.get('source', {}).get('title', 'Unknown Source')
+                            paragraphs_by_url[url].append({
+                                'title': title,
+                                'paragraph': para_data.get('paragraph', '')
+                            })
+                        
+                        # Display paragraphs grouped by URL
+                        print("\nEXTRACTED PARAGRAPHS BY SOURCE:")
+                        for url, paragraphs in sorted(paragraphs_by_url.items()):
+                            print(f"\nSource: {paragraphs[0]['title']}")
+                            print(f"URL: {url}")
+                            print("\nRELEVANT PARAGRAPHS:")
+                            for i, para in enumerate(paragraphs):
+                                print(f"\n[{i+1}] {para['paragraph']}")
+                        
+                        if 'reasoning' in nav_data and nav_data['reasoning']:
+                            print("\nREASONING:")
+                            print(nav_data['reasoning'])
+                    
+                    elif nav_data.get('action') == 'completed_with_extractions':
+                        print("\n===== EXTRACTED CONTENT =====")
+                        if not nav_data.get('extracted_content'):
+                            print("No relevant content was extracted.")
+                        else:
+                            # Group extracted paragraphs by URL
+                            paragraphs_by_url = defaultdict(list)
+                            for para_data in nav_data.get('extracted_content', []):
+                                url = para_data.get('source', {}).get('url', 'unknown')
+                                title = para_data.get('source', {}).get('title', 'Unknown Source')
+                                paragraphs_by_url[url].append({
+                                    'title': title,
+                                    'paragraph': para_data.get('paragraph', '')
+                                })
+                            
+                            # Display paragraphs grouped by URL
+                            print("\nEXTRACTED PARAGRAPHS BY SOURCE:")
+                            for url, paragraphs in sorted(paragraphs_by_url.items()):
+                                print(f"\nSource: {paragraphs[0]['title']}")
+                                print(f"URL: {url}")
+                                print("\nRELEVANT PARAGRAPHS:")
+                                for i, para in enumerate(paragraphs):
+                                    print(f"\n[{i+1}] {para['paragraph']}")
+                                
+                        # Print visited pages summary
+                        print("\n===== SOURCES VISITED =====")
+                        for i, url in enumerate(nav_data.get('visited_urls', [])):
+                            print(f"{i+1}. {url}")
+                    
+                    else:  # max_depth_reached
+                        print("\n===== COLLECTED PASSAGES =====")
+                        print("No relevant content was extracted during navigation.")
+                        print("Here are the pages that were visited:")
+                        
+                        # Group passages by URL
+                        urls_visited = {}
+                        for passage in nav_data.get('collected_passages', []):
+                            url = passage.get('url', 'unknown')
+                            title = passage.get('title', 'No title')
+                            urls_visited[url] = title
+                        
+                        # Display visited URLs in sorted order
+                        for i, (url, title) in enumerate(sorted(urls_visited.items())):
+                            print(f"\n{i+1}. {title}")
+                            print(f"   URL: {url}")
+                    
+                    # Ask if user wants to save results to a file
+                    save_option = input("\nDo you want to save these results to a file? (y/n): ")
+                    if save_option.lower() == 'y':
+                        filename = input("Enter filename to save results (default: results.json): ") or "results.json"
+                        with open(filename, 'w') as f:
+                            json.dump(nav_data, f, indent=2)
+                            print(f"Results saved to {filename}")
+                    
+                except json.JSONDecodeError:
+                    print(f"Raw content (not JSON): {navigation_results.content[0].text}")
+                except Exception as e:
+                    print(f"Error processing results: {str(e)}")
+                    print(f"Raw response: {navigation_results.content[0].text if navigation_results.content else 'No content'}")
 
 if __name__ == "__main__":
     asyncio.run(main())
