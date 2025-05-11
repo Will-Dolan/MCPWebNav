@@ -9,4 +9,4 @@ spacy
 beautifulsoup4
 mcp[cli] 
 requests 
-beautifulsoup4 
+google
