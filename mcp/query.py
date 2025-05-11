@@ -143,11 +143,11 @@ class QueryProcessor:
             query: The original user query
             
         Returns:
-            Enhanced query string
+            Enhanced query string and a boolean indicating if Claude was used successfully
         """
         if not self.client:
             # If Claude client isn't available, return original query
-            return query
+            return query, False
             
         prompt = f"""
         Your task is to reformulate the following search query to make it more effective for web search.
@@ -179,11 +179,12 @@ class QueryProcessor:
             )
             
             enhanced_query = response.content[0].text.strip()
-            return enhanced_query
+            # Return the enhanced query and True to indicate Claude was used successfully
+            return enhanced_query, True
             
         except Exception as e:
             # If there's an error with Claude, return the original query
-            return query
+            return query, False
     
     def process_query(self, query, use_context=True, use_claude=True):
         """
@@ -195,58 +196,24 @@ class QueryProcessor:
             use_claude: Whether to use Claude for query enhancement
             
         Returns:
-            Query analysis dictionary
+            Query analysis dictionary with original and enhanced query
         """
-        # Handle context from previous conversations if enabled
-        if use_context:
-            enhanced_query = self.handle_context(query)
-        else:
-            enhanced_query = query
-        
-        # Use Claude to further enhance the query if requested
+        # Use Claude to enhance the query if requested
+        enhanced_query = query
         if use_claude and self.client:
-            claude_enhanced_query = self.enhance_query_with_claude(enhanced_query)
+            enhanced_query, _ = self.enhance_query_with_claude(query)
             
-            # Prefer Claude's enhancement if available and different from original
-            if claude_enhanced_query and claude_enhanced_query != enhanced_query:
-                enhanced_query = claude_enhanced_query
-                
-                # Extract entities from Claude's enhanced query for better entity analysis
-                entity_data = self.extract_entities(enhanced_query)
-            else:
-                # If Claude didn't change the query, use our standard entity extraction
-                entity_data = self.extract_entities(enhanced_query)
-        else:
-            # Use standard entity extraction if not using Claude
-            entity_data = self.extract_entities(enhanced_query)
-        
-        # Format the search query - if Claude provided a "+" formatted query, use it directly
-        if use_claude and "+" in enhanced_query and not " " in enhanced_query.strip():
-            search_query = enhanced_query  # Claude already formatted it for search
-        else:
-            search_query = self.format_search_query(entity_data)
-        
-        # Determine search strategy
-        strategy = self.determine_search_strategy(enhanced_query, entity_data)
-        
-        # Generate query refinement suggestions
-        refinement_suggestions = self.suggest_refinements(enhanced_query, entity_data)
-        
         # Store this query in conversation history
+        entity_data = self.extract_entities(query)
         self.conversation_history.append({
-            'query': enhanced_query,
+            'query': query,
             'entities': entity_data
         })
         
-        # Prepare final output
+        # Prepare simplified output
         query_analysis = {
-            'original_query': query,
-            'enhanced_query': enhanced_query,
-            'search_query': search_query,
-            'entity_data': entity_data,
-            'search_strategy': strategy,
-            'refinement_suggestions': refinement_suggestions,
-            'claude_enhanced': use_claude and self.client is not None
+            'query': query,
+            'enhanced_query': enhanced_query
         }
         
         return query_analysis

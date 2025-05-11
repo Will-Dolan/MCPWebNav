@@ -29,6 +29,7 @@ def search_urls(query, max_urls=5):
 
 # Direct integration of source ranking logic without file dependency
 def rank_sources(docs, query):
+    # TODO: handle this outside of the function so we don't do every time
     tokenizer, model = load_tokenizer_and_model('sentence-transformers/all-MiniLM-L6-v2')
     doc_texts = [doc["text"] for doc in docs]
     doc_embeddings = torch.vstack([embed_documents(text, tokenizer, model) for text in doc_texts])

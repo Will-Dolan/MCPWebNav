@@ -1,50 +1,51 @@
-2025-05-11 14:58:51 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
-2025-05-11 14:58:51 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
-2025-05-11 14:58:53 - navigate_web called with: quantum computing, max_depth: 3, use_claude_for_query: True
-2025-05-11 14:58:53 - Original query: quantum computing
-2025-05-11 14:58:53 - process_query called with: quantum computing, use_context: True, use_claude: True
-2025-05-11 14:58:56 - Query processing successful. Claude enhanced: True
-2025-05-11 14:58:56 - Using search query: quantum+computing+explained+applications+latest+developments
-2025-05-11 14:58:56 - Query was enhanced by Claude
-2025-05-11 14:58:56 - google_search called with query: quantum+computing+explained+applications+latest+developments, num_results: 5
-2025-05-11 14:58:56 - Performing search with query: quantum+computing+explained+applications+latest+developments
-2025-05-11 14:59:02 - Search completed, found 6 results
-2025-05-11 14:59:02 - Added result: https://www.nist.gov/quantum-information-science/quantum-computing-explained
-2025-05-11 14:59:02 - Added result: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
-2025-05-11 14:59:02 - Added result: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
-2025-05-11 14:59:02 - Added result: https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423
-2025-05-11 14:59:02 - Added result: https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/
-2025-05-11 14:59:02 - Added result: https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/
-2025-05-11 14:59:02 - Returning JSON string: [{"url": "https://www.nist.gov/quantum-information-science/quantum-computing-explained"}, {"url": "https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology"}, {"url": "https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses"}, {"url": "https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423"}, {"url": "https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/"}, {"url": "https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/"}]
-2025-05-11 14:59:02 - Search results: [{"url": "https://www.nist.gov/quantum-information-science/quantum-computing-explained"}, {"url": "https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology"}, {"url": "https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses"}, {"url": "https://global.fujitsu/en-global/technology/key-technologies/news/ta-quantum-app-dev-for-enterprises-20250423"}, {"url": "https://epb.com/get-connected/gig-internet/top-applications-of-quantum-computing/"}, {"url": "https://news.microsoft.com/source/features/innovation/microsofts-majorana-1-chip-carves-new-path-for-quantum-computing/"}]
-2025-05-11 14:59:02 - Current depth: 0
-2025-05-11 14:59:02 - Next link to explore: https://www.nist.gov/quantum-information-science/quantum-computing-explained
-2025-05-11 14:59:02 - Remaining links: 5
-2025-05-11 14:59:02 - Scraping webpage: https://www.nist.gov/quantum-information-science/quantum-computing-explained
-2025-05-11 14:59:02 - Added passage from https://www.nist.gov/quantum-information-science/quantum-computing-explained, title: Quantum Computing Explained | NIST
-2025-05-11 14:59:02 - Analyzing content
-2025-05-11 14:59:09 - Analysis result action: both
-2025-05-11 14:59:09 - Both extracting content and adding links to explore
-2025-05-11 14:59:09 - Adding 5 links to explore
-2025-05-11 14:59:09 - Current depth: 1
-2025-05-11 14:59:09 - Next link to explore: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
-2025-05-11 14:59:09 - Remaining links: 9
-2025-05-11 14:59:09 - Scraping webpage: https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology
-2025-05-11 14:59:10 - Added passage from https://pme.uchicago.edu/news/world-quantum-day-2024-latest-developments-quantum-science-and-technology, title: World Quantum Day 2024: The latest developments in quantum science and technology | Pritzker School of Molecular Engineering | The University of Chicago
-2025-05-11 14:59:10 - Analyzing content
-2025-05-11 14:59:18 - Analysis result action: both
-2025-05-11 14:59:18 - Both extracting content and adding links to explore
-2025-05-11 14:59:18 - Adding 5 links to explore
-2025-05-11 14:59:18 - Current depth: 2
-2025-05-11 14:59:18 - Next link to explore: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
-2025-05-11 14:59:18 - Remaining links: 13
-2025-05-11 14:59:18 - Scraping webpage: https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses
-2025-05-11 14:59:18 - Added passage from https://www.techtarget.com/searchdatacenter/tip/Explore-future-potential-quantum-computing-uses, title: Explore 7 future potential quantum computing uses | TechTarget
-2025-05-11 14:59:18 - Analyzing content
-2025-05-11 14:59:25 - Analysis result action: both
-2025-05-11 14:59:25 - Both extracting content and adding links to explore
-2025-05-11 14:59:25 - Adding 6 links to explore
-2025-05-11 14:59:25 - Reached max depth or no more links
-2025-05-11 14:59:25 - Collected 61 extractions
-2025-05-11 14:59:25 - Visited 3 URLs
-2025-05-11 14:59:25 - Returning with collected extractions
+2025-05-11 15:18:19 - Server starting up. Debug log at: /home/will/USCCS/MCPWebNav/mcp/server_debug.txt
+2025-05-11 15:18:19 - Current working directory: /home/will/USCCS/MCPWebNav/mcp
+2025-05-11 15:18:20 - navigate_web called with: Python programming, max_depth: 3, use_claude_for_query: True
+2025-05-11 15:18:20 - Original query: Python programming
+2025-05-11 15:18:20 - process_query called with: Python programming, use_claude: True
+2025-05-11 15:18:23 - Query processing successful. Enhanced query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:18:23 - Using enhanced query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:18:23 - google_search called with query: Python+programming+tutorial+basics+examples+best+practices, num_results: 5
+2025-05-11 15:18:23 - Performing search with query: Python+programming+tutorial+basics+examples+best+practices
+2025-05-11 15:18:28 - Search completed, found 6 results
+2025-05-11 15:18:28 - Added result: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:18:28 - Added result: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:18:28 - Added result: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
+2025-05-11 15:18:28 - Added result: https://docs.python.org/3/tutorial/index.html
+2025-05-11 15:18:28 - Added result: https://realpython.com/tutorials/best-practices/
+2025-05-11 15:18:28 - Added result: https://www.w3schools.com/python/
+2025-05-11 15:18:28 - Returning JSON string: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
+2025-05-11 15:18:28 - Search results: [{"url": "https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3"}, {"url": "https://www.geeksforgeeks.org/python-programming-examples/"}, {"url": "https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/"}, {"url": "https://docs.python.org/3/tutorial/index.html"}, {"url": "https://realpython.com/tutorials/best-practices/"}, {"url": "https://www.w3schools.com/python/"}]
+2025-05-11 15:18:28 - Current depth: 0
+2025-05-11 15:18:28 - Next link to explore: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:18:28 - Remaining links: 5
+2025-05-11 15:18:28 - Scraping webpage: https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3
+2025-05-11 15:18:29 - Added passage from https://gist.github.com/ruimaranhao/4e18cbe3dad6f68040c32ed6709090a3, title: A guide of best practices to developing in Python (meant for the first year students of the Instituto Superior Técnico, U.Lisboa). · GitHub
+2025-05-11 15:18:29 - Analyzing content
+2025-05-11 15:18:36 - Analysis result action: both
+2025-05-11 15:18:36 - Both extracting content and adding links to explore
+2025-05-11 15:18:36 - Adding 4 links to explore
+2025-05-11 15:18:36 - Current depth: 1
+2025-05-11 15:18:36 - Next link to explore: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:18:36 - Remaining links: 8
+2025-05-11 15:18:36 - Scraping webpage: https://www.geeksforgeeks.org/python-programming-examples/
+2025-05-11 15:18:37 - Added passage from https://www.geeksforgeeks.org/python-programming-examples/, title: Python Programs | GeeksforGeeks
+2025-05-11 15:18:37 - Analyzing content
+2025-05-11 15:18:43 - Analysis result action: both
+2025-05-11 15:18:43 - Both extracting content and adding links to explore
+2025-05-11 15:18:43 - Adding 5 links to explore
+2025-05-11 15:18:43 - Current depth: 2
+2025-05-11 15:18:43 - Next link to explore: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
+2025-05-11 15:18:43 - Remaining links: 12
+2025-05-11 15:18:43 - Scraping webpage: https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/
+2025-05-11 15:18:44 - Added passage from https://www.reddit.com/r/Python/comments/15u6fey/what_are_your_best_practices_for_coding_in_python/, title: Reddit - The heart of the internet
+2025-05-11 15:18:44 - Analyzing content
+2025-05-11 15:18:51 - Analysis result action: both
+2025-05-11 15:18:51 - Both extracting content and adding links to explore
+2025-05-11 15:18:51 - Adding 6 links to explore
+2025-05-11 15:18:51 - Reached max depth or no more links
+2025-05-11 15:18:51 - Collected 39 extractions
+2025-05-11 15:18:51 - Visited 3 URLs
+2025-05-11 15:18:51 - Saving results to results.json
+2025-05-11 15:18:51 - Successfully saved results to results.json
+2025-05-11 15:18:51 - Returning with collected extractions
