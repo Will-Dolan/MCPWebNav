@@ -10,3 +10,4 @@ beautifulsoup4
 mcp[cli] 
 requests 
 google
+streamlit
