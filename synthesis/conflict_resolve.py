@@ -44,7 +44,7 @@ def has_conflict(client, model_name, higher_text: str, lower_text: str) -> bool:
     return answer.startswith('yes')
 
 def resolve_conflicts_main(jsonobj):
-    jsonobj["data"] = jsonobj["data"].sort(key=lambda x:x["rank"])
+    jsonobj["data"] = jsonobj["data"].sort(key=lambda x:-x["credibility"])
     filtered = []
     client = create_anthropic_client()
     
