@@ -38,9 +38,8 @@ def generate_citation(client, model_name, url: str, style: str = "APA") -> str:
     response = query_claude_cit(client, model_name, prompt)
     return response.completion.strip()
 
-def generate_citation_main(filepath):
+def generate_citation_main(jsonobj):
   client = create_anthropic_client()
-  jsonobj = load_json(filepath)
   for i in range(len(jsonobj["data"])):
     jsonobj["data"][i]["citation"] = generate_citation(client, "claude-3-7-sonnet-latest", jsonobj[i]["url"])
   return jsonobj
