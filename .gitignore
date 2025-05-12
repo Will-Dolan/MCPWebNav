@@ -6,3 +6,4 @@ mcp/server_debug.txt
 *.json
 chat_history
 *log.txt
+server_debug.txt
