@@ -29,6 +29,9 @@ mcp = FastMCP("Web Search Server")
 # Initialize the Anthropic client
 client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
+# Initialize QueryProcessor with the Claude client
+query_processor = QueryProcessor(claude_client=client)
+
 # Initialize debug logging
 debug_file_path = os.path.join(os.getcwd(), "server_debug.txt")
 f = open(debug_file_path, "w")
@@ -42,6 +45,33 @@ def debug_log(message):
 # Log at startup
 debug_log(f"Server starting up. Debug log at: {debug_file_path}")
 debug_log(f"Current working directory: {os.getcwd()}")
+
+def process_query(query: str, use_context: bool = True, use_claude: bool = True) -> str:
+    """
+    Process a user query to enhance it with QueryProcessor.
+
+    Args:
+        query: The user's search query
+        use_context: Whether to use conversation context (default: True)
+        use_claude: Whether to use Claude to enhance the query (default: True)
+
+    Returns:
+        JSON string with original and enhanced query
+    """
+    debug_log(f"process_query called with: {query}, use_context: {use_context}, use_claude: {use_claude}")
+
+    try:
+        # Process the query using QueryProcessor
+        query_analysis = query_processor.process_query(query, use_context, use_claude)
+        debug_log(f"Query processing successful. Enhanced query: {query_analysis.get('enhanced_query', query)}")
+        return json.dumps(query_analysis)
+    except Exception as e:
+        debug_log(f"Error in process_query: {str(e)}")
+        return json.dumps({
+            "query": query,
+            "enhanced_query": query,
+            "error": str(e)
+        })
 
 def save_results_to_file(results, filename="search_results.json"):
     """Save search results to a JSON file."""
@@ -233,63 +263,6 @@ def rank_sources(docs, query):
         return docs  # Return original docs if ranking fails
 
 @mcp.tool()
-def enhance_query(query: str) -> dict:
-    """
-    Enhance a user query with Claude to make it more effective for search.
-    
-    Args:
-        query: The user's search query
-    
-    Returns:
-        Dictionary with original and enhanced query
-    """
-    debug_log(f"enhance_query called with: {query}")
-
-    try:
-        # Create prompt for Claude
-        prompt = f"""
-        I need help enhancing this search query to make it more effective:
-        
-        "{query}"
-        
-        Please analyze this query and provide an enhanced version that would work better 
-        for web search. Consider:
-        
-        1. Adding specific keywords that would improve search results
-        2. Removing ambiguous terms
-        3. Making it more precise and focused
-        
-        Respond with ONLY the enhanced query, without any explanation, quotation marks, or additional commentary.
-        """
-        
-        # Call Claude API
-        response = client.messages.create(
-            model="claude-3-5-sonnet-20240620",
-            max_tokens=100,
-            temperature=0,
-            system="You help enhance search queries to make them more effective. Respond with only the enhanced query.",
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        enhanced_query = response.content[0].text.strip()
-        debug_log(f"Original query: {query}")
-        debug_log(f"Enhanced query: {enhanced_query}")
-        
-        return {
-            "original_query": query,
-            "enhanced_query": enhanced_query
-        }
-    except Exception as e:
-        debug_log(f"Error in enhance_query: {str(e)}")
-        return {
-            "original_query": query,
-            "enhanced_query": query,  # Return original if enhancement fails
-            "error": str(e)
-        }
-
-@mcp.tool()
 def google_search(query: str, num_results: int = 5) -> list:
     """
     Perform a web search using googlesearch-python and return results.
@@ -376,7 +349,7 @@ def scrape_webpage(url: str) -> dict:
         return {"error": f"Failed to scrape webpage: {str(e)}"}
 
 @mcp.tool()
-def create_summary(query: str, documents: list) -> str:
+def create_summary(query: str, documents: list) -> dict:
     """
     Create a summary of the documents in relation to the query.
     
@@ -385,7 +358,7 @@ def create_summary(query: str, documents: list) -> str:
         documents: List of documents with content to summarize
     
     Returns:
-        A summary of the relevant information
+        A dictionary with the summary and source information
     """
     debug_log(f"create_summary called with query: {query}, documents: {len(documents)}")
     
@@ -398,7 +371,7 @@ def create_summary(query: str, documents: list) -> str:
         doc_texts = []
         similarity_scores = []
         credibility_scores = []
-        doc_sources = []
+        citation_sources = []
         
         for i, doc in enumerate(top_documents):
             if "content" in doc and doc["content"]:
@@ -411,15 +384,15 @@ def create_summary(query: str, documents: list) -> str:
                 similarity_scores.append(doc.get("similarity", 0.0))
                 credibility_scores.append(doc.get("credibility", 0.5))
                 
-                source_info = f"[{i+1}] {doc.get('url', 'Unknown URL')}"
-                if "similarity" in doc:
-                    source_info += f" (Similarity: {doc['similarity']:.2f}"
-                if "credibility" in doc:
-                    source_info += f", Credibility: {doc['credibility']:.2f})"
-                else:
-                    source_info += ")"
-                    
-                doc_sources.append(source_info)
+                # Create citation data structure
+                citation_sources.append({
+                    "index": i+1,
+                    "url": doc.get('url', 'Unknown URL'),
+                    "title": doc.get('title', 'Unknown Title'),
+                    "similarity": doc.get('similarity', 0.0),
+                    "credibility": doc.get('credibility', 0.5),
+                    "snippet": doc.get('content', '')[:200] + "..." if doc.get('content') else ""
+                })
         
         # Create the prompt for Claude
         prompt = ""
@@ -452,22 +425,27 @@ def create_summary(query: str, documents: list) -> str:
         summary = response.content[0].text.strip()
         debug_log(f"Created summary of length: {len(summary)}")
         
-        # Add source information
-        summary_with_sources = f"{summary}\n\nSources:\n" + "\n".join(doc_sources)
-        
-        return summary_with_sources
+        # Return both summary and citation information separately
+        return {
+            "summary_text": summary,
+            "citations": citation_sources
+        }
         
     except Exception as e:
         debug_log(f"Error in create_summary: {str(e)}")
-        return f"Failed to create summary: {str(e)}"
+        return {
+            "summary_text": f"Failed to create summary: {str(e)}",
+            "citations": []
+        }
 
 @mcp.tool()
 def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
     """
-    Run the complete search pipeline: enhance query, search, extract content, rank sources, and create summary.
+    Run the complete search pipeline: search, extract content, rank sources, and create summary.
+    Now uses the enhanced query directly from get_chat_response.
     
     Args:
-        query: The user's search query
+        query: The search query (already enhanced)
         num_results: Number of search results to use (default: 5)
     
     Returns:
@@ -476,30 +454,24 @@ def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
     debug_log(f"complete_search_pipeline called with query: {query}, num_results: {num_results}")
     
     try:
-        # Step 1: Enhance the query
-        debug_log("Step 1: Enhancing query")
-        enhancement_result = enhance_query(query)
-        enhanced_query = enhancement_result.get("enhanced_query", query)
-        
-        # Step 2: Perform Google search with enhanced query
-        debug_log("Step 2: Performing Google search")
-        search_results = google_search(enhanced_query, num_results)
+        # Step 1: Perform Google search with the query
+        debug_log("Step 1: Performing Google search")
+        search_results = google_search(query, num_results)
         
         if not search_results or "error" in search_results[0]:
             error_message = search_results[0].get("error", "Unknown error in search") if search_results else "No search results"
             debug_log(f"Error in search: {error_message}")
             return {
-                "original_query": query,
-                "enhanced_query": enhanced_query,
                 "error": error_message,
                 "search_results": [],
                 "content": [],
                 "ranked_content": [],
-                "summary": f"Search failed: {error_message}"
+                "summary_text": f"Search failed: {error_message}",
+                "citations": []
             }
         
-        # Step 3: Extract content from each search result
-        debug_log("Step 3: Extracting content from search results")
+        # Step 2: Extract content from each search result
+        debug_log("Step 2: Extracting content from search results")
         content_results = []
         
         for result in search_results:
@@ -513,30 +485,28 @@ def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
         if not content_results:
             debug_log("No content could be extracted from any of the search results")
             return {
-                "original_query": query,
-                "enhanced_query": enhanced_query,
                 "search_results": search_results,
                 "content": [],
                 "ranked_content": [],
-                "summary": "No content could be extracted from the search results."
+                "summary_text": "No content could be extracted from the search results.",
+                "citations": []
             }
         
-        # Step 4: Rank sources based on relevance to the query and credibility
-        debug_log("Step 4: Ranking sources by similarity and credibility")
+        # Step 3: Rank sources based on relevance to the query and credibility
+        debug_log("Step 3: Ranking sources by similarity and credibility")
         ranked_content = rank_sources(content_results, query)
         
-        # Step 5: Create summary from ranked content
-        debug_log("Step 5: Creating summary")
-        summary = create_summary(query, ranked_content[:3])  # Use top 3 sources for summary
+        # Step 4: Create summary from ranked content
+        debug_log("Step 4: Creating summary")
+        summary_result = create_summary(query, ranked_content[:max(len(ranked_content), 5)])  # Use top 5 sources for summary
         
         # Prepare final result
         result = {
-            "original_query": query,
-            "enhanced_query": enhanced_query,
             "search_results": search_results,
             "content": content_results,
             "ranked_content": ranked_content,
-            "summary": summary
+            "summary_text": summary_result.get("summary_text", "No summary available"),
+            "citations": summary_result.get("citations", [])
         }
         
         # Save results to file
@@ -547,18 +517,19 @@ def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
     except Exception as e:
         debug_log(f"Error in complete_search_pipeline: {str(e)}")
         return {
-            "original_query": query,
             "error": f"Pipeline failed: {str(e)}",
             "search_results": [],
             "content": [],
             "ranked_content": [],
-            "summary": f"Search pipeline failed: {str(e)}"
+            "summary_text": f"Search pipeline failed: {str(e)}",
+            "citations": []
         }
 
 @mcp.tool()
 def get_chat_response(query: str, chat_history: list = None) -> dict:
     """
     Get a response for a user query with chat history context.
+    Uses QueryProcessor to enhance queries before searching.
     
     Args:
         query: The user's query
@@ -570,16 +541,39 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
     debug_log(f"get_chat_response called with query: {query}, history length: {len(chat_history) if chat_history else 0}")
     
     try:
-        # Run the search pipeline for this query
-        search_results = complete_search_pipeline(query)
+        # Process the query to enhance it using QueryProcessor
+        debug_log(f"Original query: {query}")
+        use_claude_for_query = True  # This can be a config parameter
+        query_analysis_json = process_query(query, use_context=True, use_claude=use_claude_for_query)
+        query_analysis = json.loads(query_analysis_json)
+
+        # Use the enhanced query if available, otherwise use original
+        # Initialize variables to store query information
+        enhanced_query = query
+        
+        if "error" not in query_analysis:
+            # Get enhanced query
+            enhanced_query = query_analysis.get("enhanced_query", query)
+            debug_log(f"Using enhanced query: {enhanced_query}")
+        else:
+            debug_log(f"Using original query due to error: {query_analysis.get('error')}")
+
+        # Run the search pipeline with the enhanced query
+        search_results = complete_search_pipeline(enhanced_query)
+        
+        # Add query information to search results
+        search_results["original_query"] = query
+        search_results["enhanced_query"] = enhanced_query
         
         # If search has an error, return it
         if "error" in search_results:
             debug_log(f"Search error: {search_results['error']}")
             return {
                 "query": query,
+                "enhanced_query": enhanced_query,
                 "response": f"I encountered an error: {search_results['error']}",
-                "search_results": search_results
+                "search_results": search_results,
+                "citations": []
             }
         
         # If we have chat history, include it in the context
@@ -590,14 +584,17 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
                 history_context += f"User: {exchange.get('query', '')}\n"
                 history_context += f"Assistant: {exchange.get('response', '')}\n\n"
         
-        # Get the summary from the search results
-        summary = search_results.get("summary", "No summary available")
+        # Get the summary text from the search results
+        summary_text = search_results.get("summary_text", "No summary available")
+        citations = search_results.get("citations", [])
         
         # Add search results to the response
         response = {
             "query": query,
-            "response": summary,
-            "search_results": search_results
+            "enhanced_query": enhanced_query,
+            "response": summary_text,
+            "search_results": search_results,
+            "citations": citations
         }
         
         debug_log(f"Returning chat response with {len(search_results.get('ranked_content', []))} ranked sources")
@@ -608,7 +605,8 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
         return {
             "query": query,
             "response": f"Sorry, I encountered an error: {str(e)}",
-            "search_results": {}
+            "search_results": {},
+            "citations": []
         }
 
 if __name__ == "__main__":
