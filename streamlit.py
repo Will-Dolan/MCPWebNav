@@ -152,6 +152,7 @@ def main():
                     st.markdown("**Citations:**")
                     for citation in citations:
                         st.markdown(f"- [{citation['title']}]({citation['url']})\nCredibility Score: {citation['credibility']}; Similarity Score: {citation['similarity']:.2f}")
+            
                 
             except Exception as e:
                 message_placeholder.error(f"An error occurred: {str(e)}")

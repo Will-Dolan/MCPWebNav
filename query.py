@@ -1,7 +1,3 @@
-import json
-import os
-import anthropic
-
 class QueryProcessor:
     def __init__(self, claude_client=None):
         self.conversation_history = []
@@ -149,20 +145,33 @@ class QueryProcessor:
             # If Claude client isn't available, return original query
             return query, False
             
+        # Add context from recent conversation if available
+        context_info = ""
+        if len(self.conversation_history) > 0:
+            # Get the last 2 entries from conversation history
+            recent_history = self.conversation_history[-2:] if len(self.conversation_history) >= 2 else self.conversation_history
+            context_info = "Previous queries in this conversation:\n"
+            for i, entry in enumerate(recent_history):
+                context_info += f"{i+1}. {entry['query']}\n"
+            context_info += "\n"
+            
         prompt = f"""
         Your task is to reformulate the following search query to make it more effective for web search.
         
-        Original Query: "{query}"
+        Current Query: "{query}"
+        {context_info}
         
-        Please analyze this query and:
+        Please analyze this current query and:
         1. Identify the core information need
         2. Extract key concepts and entities
         3. Reformulate as a search-engine optimized query
         4. Use "+" between terms for search engine compatibility
+        5. If this appears to be a follow-up question, incorporate relevant context from previous queries
         
         For example:
         - "What's the capital of France?" → "capital+of+France+Paris"
         - "How do birds migrate?" → "bird+migration+how+navigation+seasons"
+        - Follow-up: "When do they do it?" (after question about bird migration) → "bird+migration+timing+seasons+when"
         
         Reply with ONLY the reformulated query, no other text.
         """
@@ -198,22 +207,44 @@ class QueryProcessor:
         Returns:
             Query analysis dictionary with original and enhanced query
         """
+        # Extract entity data first
+        entity_data = self.extract_entities(query)
+        
+        # Apply context handling if requested
+        context_enhanced_query = query
+        if use_context:
+            context_enhanced_query = self.handle_context(query)
+            
         # Use Claude to enhance the query if requested
-        enhanced_query = query
+        final_query = context_enhanced_query
         if use_claude and self.client:
-            enhanced_query, _ = self.enhance_query_with_claude(query)
+            final_query, _ = self.enhance_query_with_claude(context_enhanced_query)
             
         # Store this query in conversation history
-        entity_data = self.extract_entities(query)
         self.conversation_history.append({
             'query': query,
-            'entities': entity_data
+            'entities': entity_data,
+            'enhanced_query': final_query
         })
+        
+        # Limit conversation history to last 10 entries to prevent unbounded growth
+        if len(self.conversation_history) > 10:
+            self.conversation_history = self.conversation_history[-10:]
         
         # Prepare simplified output
         query_analysis = {
             'query': query,
-            'enhanced_query': enhanced_query
+            'enhanced_query': final_query
         }
         
         return query_analysis
+        
+    # New helper methods for managing conversation history
+    
+    def get_conversation_history(self):
+        """Get the current conversation history"""
+        return self.conversation_history
+        
+    def clear_conversation_history(self):
+        """Clear the conversation history"""
+        self.conversation_history = []
