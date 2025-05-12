@@ -13,11 +13,9 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 
-# Global variables
 chat_history = []
 save_dir = 'chat_history'
 
@@ -35,21 +33,17 @@ async def query_mcp_server(query):
     """Query the MCP server and return the response"""
     global chat_history
     
-    # Define server parameters for stdio connection
     server_params = StdioServerParameters(
         command=sys.executable,  # Use the current Python interpreter
-        args=["server.py"],      # The server script
+        args=["server.py"],      
         env=os.environ.copy()    # Pass current environment variables
     )
     
-    # Connect to the server
+
     async with stdio_client(server_params) as (read_stream, write_stream):
-        # Create a client session
         async with ClientSession(read_stream, write_stream) as session:
-            # Initialize the connection
             await session.initialize()
             
-            # Call the get_chat_response tool with the query and chat history
             response = await session.call_tool("get_chat_response", {
                 "query": query,
                 "chat_history": chat_history
@@ -57,11 +51,8 @@ async def query_mcp_server(query):
             
             if response.isError:
                 raise Exception(f"Error: {response.content[0].text if response.content else 'No content'}")
-            
-            # Parse the JSON response
             result_data = json.loads(response.content[0].text)
             
-            # Add to chat history
             chat_entry = {
                 "query": query,
                 "response": result_data.get("response", ""),
@@ -70,7 +61,6 @@ async def query_mcp_server(query):
             }
             chat_history.append(chat_entry)
             
-            # Save after each exchange
             os.makedirs(save_dir, exist_ok=True)
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             session_filename = f"chat_session_{timestamp}.json"
@@ -102,7 +92,6 @@ def main():
         st.session_state.server_process = start_mcp_server()
         st.session_state.server_running = True
 
-    # Show server status
     if st.session_state.server_running:
         st.sidebar.success("MCP Server: Running")
     else:
@@ -112,7 +101,6 @@ def main():
             st.session_state.server_running = True
             st.rerun()
 
-    # Initialize chat history in session state if not present
     if 'messages' not in st.session_state:
         st.session_state.messages = []
 
@@ -129,42 +117,30 @@ def main():
                 for link in message["visited_links"]:
                     st.markdown(f"- {link}")
 
-    # User input
     query = st.chat_input("Enter your question")
     
     if query:
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": query})
         
-        # Display user message
         with st.chat_message("user"):
             st.markdown(query)
-        
-        # Display assistant response
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             message_placeholder.markdown("Searching and generating response...")
             
             try:
-                # Get response from MCP server
                 response = run_async_query(query)
-                
-                # Extract relevant information
                 answer = response.get("response", "Sorry, I couldn't find an answer.")
-                
-                # Extract citations data
                 citations = response.get("citations", [])
-                
-                # Extract visited links
+
                 visited_links = []
                 search_results = response.get("search_results", {})
                 for result in search_results.get("results", []):
                     visited_links.append(result.get("url", "#"))
                 
-                # Update the message placeholder
                 message_placeholder.markdown(answer)
                 
-                # Add assistant message to chat history
                 st.session_state.messages.append({
                     "role": "assistant", 
                     "content": answer,
@@ -172,17 +148,10 @@ def main():
                     "visited_links": visited_links
                 })
                 
-                # Show citations
                 if citations:
                     st.markdown("**Citations:**")
                     for citation in citations:
                         st.markdown(f"- [{citation['title']}]({citation['url']})\nCredibility Score: {citation['credibility']}; Similarity Score: {citation['similarity']:.2f}")
-                
-                # Show visited links
-                if visited_links:
-                    st.markdown("**Websites Visited:**")
-                    for link in visited_links:
-                        st.markdown(f"- {link}")
                 
             except Exception as e:
                 message_placeholder.error(f"An error occurred: {str(e)}")
