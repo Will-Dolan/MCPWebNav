@@ -446,20 +446,220 @@ def create_summary(query: str, documents: list) -> dict:
             "citations": []
         }
 
-@mcp.tool()
-def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
+def extract_main_content_links(url, soup):
     """
-    Run the complete search pipeline: search, extract content, rank sources, and create summary.
-    Now uses the enhanced query directly from get_chat_response.
+    Extract links only from the main content area of a webpage.
     
     Args:
-        query: The search query (already enhanced)
+        url: The URL of the page
+        soup: BeautifulSoup object of the page
+    
+    Returns:
+        List of dictionaries with url, anchor_text, and surrounding_context
+    """
+    debug_log(f"Extracting main content links from {url}")
+    
+    links = []
+    
+    try:
+        # Try to identify main content area using common patterns
+        main_content = None
+        
+        # Method 1: Look for semantic HTML5 elements
+        if not main_content:
+            for tag in ['article', 'main', 'section']:
+                content_candidates = soup.find_all(tag)
+                if content_candidates:
+                    # Choose the largest content area by text length
+                    main_content = max(content_candidates, key=lambda x: len(x.get_text()))
+                    debug_log(f"Found main content using {tag} tag")
+                    break
+        
+        # Method 2: Look for common content class names
+        if not main_content:
+            for class_name in ['content', 'article', 'post', 'entry', 'story', 'text', 'body']:
+                content_candidates = soup.find_all(class_=lambda c: c and class_name in c.lower())
+                if content_candidates:
+                    main_content = max(content_candidates, key=lambda x: len(x.get_text()))
+                    debug_log(f"Found main content using class containing '{class_name}'")
+                    break
+        
+        # Method 3: If still no main content, use heuristics - find div with most text
+        if not main_content:
+            divs = soup.find_all('div')
+            if divs:
+                # Filter divs to those with substantial text
+                text_divs = [div for div in divs if len(div.get_text()) > 200]
+                if text_divs:
+                    main_content = max(text_divs, key=lambda x: len(x.get_text()))
+                    debug_log("Found main content using text length heuristic")
+        
+        # If still no main content, fall back to the whole body
+        if not main_content:
+            main_content = soup.body
+            debug_log("Using entire body as main content (fallback)")
+        
+        # Extract links from the main content
+        if main_content:
+            for link in main_content.find_all('a', href=True):
+                href = link['href']
+                
+                # Convert relative URLs to absolute
+                if href.startswith('/'):
+                    from urllib.parse import urlparse
+                    parsed_url = urlparse(url)
+                    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+                    href = base_url + href
+                
+                # Filter out non-http links, anchors, etc.
+                if href.startswith(('http://', 'https://')) and '#' not in href:
+                    # Get anchor text
+                    anchor_text = link.get_text().strip()
+                    
+                    # Skip links with very short anchor text
+                    if len(anchor_text) < 3:
+                        continue
+                    
+                    # Skip common non-content links
+                    skip_keywords = ['login', 'sign up', 'subscribe', 'register', 'comment', 
+                                    'share', 'privacy', 'terms', 'advertise']
+                    if any(keyword in anchor_text.lower() for keyword in skip_keywords):
+                        continue
+                    
+                    # Get surrounding context (up to 100 characters before and after)
+                    parent_text = link.parent.get_text()
+                    link_position = parent_text.find(anchor_text)
+                    start_pos = max(0, link_position - 100)
+                    end_pos = min(len(parent_text), link_position + len(anchor_text) + 100)
+                    context = parent_text[start_pos:end_pos].strip()
+                    
+                    links.append({
+                        "url": href,
+                        "anchor_text": anchor_text,
+                        "context": context
+                    })
+        
+        debug_log(f"Extracted {len(links)} links from main content")
+        return links
+        
+    except Exception as e:
+        debug_log(f"Error extracting main content links: {str(e)}")
+        return []
+
+
+def prioritize_links_with_claude(query, candidate_links, current_knowledge="", max_links=5):
+    """
+    Use Claude to prioritize which links to explore next.
+    
+    Args:
+        query: The original search query
+        candidate_links: List of potential links with anchor text and context
+        current_knowledge: Summary of what we've learned so far
+        max_links: Maximum number of links to select (default: 3)
+    
+    Returns:
+        List of selected links with URLs and reasons for selection
+    """
+    debug_log(f"Prioritizing {len(candidate_links)} links with Claude")
+    
+    if not candidate_links:
+        return []
+    
+    try:
+        # Prepare the prompt
+        links_text = ""
+        for i, link in enumerate(candidate_links):
+            links_text += f"{i+1}. \"{link['anchor_text']}\" - {link['url']}\n"
+            links_text += f"   Context: {link['context'][:150]}...\n\n"
+        
+        # Construct the prompt
+        prompt = f"""
+        Your task is to select the {max_links} most relevant links to explore next.
+        
+        ORIGINAL QUERY: {query}
+        
+        CURRENT KNOWLEDGE: {current_knowledge if current_knowledge else "No information gathered yet."}
+        
+        CANDIDATE LINKS:
+        {links_text}
+        
+        Select up to {max_links} links that are most likely to contain relevant information about the query.
+        If fewer than {max_links} links seem relevant, only select those that are truly relevant.
+        For each selected link, provide a brief explanation of why it's relevant.
+        
+        FORMAT YOUR RESPONSE AS JSON:
+        {{
+          "selected_links": [
+            {{
+              "index": 1,
+              "reason": "This link likely contains information about X aspect of the query"
+            }},
+            ...
+          ]
+        }}
+        """
+        
+        # Send the request to Claude
+        system_prompt = "You are a helpful assistant that evaluates the relevance of links for web research. You only respond with valid JSON."
+        
+        response = client.messages.create(
+            model="claude-3-5-sonnet-20240620",
+            max_tokens=1000,
+            temperature=0.1,
+            system=system_prompt,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        response_text = response.content[0].text.strip()
+        
+        # Extract the JSON
+        if "```json" in response_text:
+            json_text = response_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in response_text:
+            json_text = response_text.split("```")[1].strip()
+        else:
+            json_text = response_text
+        
+        # Parse the JSON
+        result = json.loads(json_text)
+        
+        # Map the selected indices back to the original links
+        selected_links = []
+        for selection in result.get("selected_links", []):
+            index = selection.get("index")
+            if 1 <= index <= len(candidate_links):
+                link_data = candidate_links[index-1].copy()
+                link_data["reason"] = selection.get("reason", "No reason provided")
+                selected_links.append(link_data)
+        
+        debug_log(f"Claude selected {len(selected_links)} links to explore next")
+        return selected_links
+        
+    except Exception as e:
+        debug_log(f"Error prioritizing links with Claude: {str(e)}")
+        return candidate_links[:min(len(candidate_links), max_links)]  # Fallback to first few links
+
+@mcp.tool()
+def complete_search_pipeline(query: str, num_results: int = 5, max_depth: int = 5, 
+                             max_links_per_page: int = 5, max_parallel_requests: int = 3,
+                             follow_links: bool = True) -> dict:
+    """
+    Run the complete search pipeline with intelligent link exploration and parallel scraping.
+    
+    Args:
+        query: The search query
         num_results: Number of search results to use (default: 5)
+        max_depth: Maximum exploration depth (default: 5)
+        max_links_per_page: Maximum links to follow from each page (default: 5)
+        max_parallel_requests: Maximum number of parallel scraping requests (default: 3)
+        follow_links: Whether to follow links from pages or stop at search results (default: True)
     
     Returns:
         Dictionary with all search results and summary
     """
-    debug_log(f"complete_search_pipeline called with query: {query}, num_results: {num_results}")
+    debug_log(f"complete_search_pipeline called with query: {query}, num_results: {num_results}, max_depth: {max_depth}, follow_links: {follow_links}")
     
     try:
         # Step 1: Perform Google search with the query
@@ -478,41 +678,219 @@ def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
                 "citations": []
             }
         
-        # Step 2: Extract content from each search result in parallel
-        debug_log("Step 2: Extracting content from search results using parallel processing")
-        urls_to_scrape = [result.get("url") for result in search_results if result.get("url")]
+        # Initialize tracking variables
+        visited_urls = set()
+        content_results = []
+        exploration_path = []
+        current_knowledge = ""
         
-        # Use ThreadPoolExecutor to fetch content in parallel
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scrape_tasks = [executor.submit(scrape_webpage, url) for url in urls_to_scrape]
+        # Initialize with search results
+        urls_to_scrape = []
+        for result in search_results:
+            url = result.get("url")
+            if url and url not in visited_urls:
+                urls_to_scrape.append({
+                    "url": url, 
+                    "depth": 0,
+                    "reason": "Initial search result"
+                })
+                visited_urls.add(url)
+        
+        # If not following links, set max_depth to 0 to only process search results
+        if not follow_links:
+            debug_log("Link following disabled, only processing search results")
+            max_depth = 0
+        
+        # Process each depth level
+        current_depth = 0
+        while current_depth <= max_depth and urls_to_scrape:
+            debug_log(f"Processing depth level {current_depth}")
             
-            content_results = []
-            for task in concurrent.futures.as_completed(scrape_tasks):
-                content = task.result()
-                if "error" not in content:
-                    content_results.append(content)
-                    debug_log(f"Successfully scraped content from: {content.get('url')}")
+            # Filter URLs for the current depth
+            current_level_urls = [item for item in urls_to_scrape if item["depth"] == current_depth]
+            urls_to_scrape = [item for item in urls_to_scrape if item["depth"] != current_depth]
+            
+            if not current_level_urls:
+                debug_log(f"No URLs to process at depth {current_depth}")
+                current_depth += 1
+                continue
+            
+            debug_log(f"Processing {len(current_level_urls)} URLs at depth {current_depth}")
+            
+            # Process URLs in parallel batches to avoid overwhelming servers
+            next_level_candidates = []
+            
+            # Create batches of URLs to process in parallel
+            for i in range(0, len(current_level_urls), max_parallel_requests):
+                batch = current_level_urls[i:i+max_parallel_requests]
+                debug_log(f"Processing batch of {len(batch)} URLs")
+                
+                # Scrape URLs in parallel
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    # Map URLs to scraping tasks
+                    future_to_url = {
+                        executor.submit(scrape_webpage, item["url"]): item 
+                        for item in batch
+                    }
+                    
+                    # Process completed tasks
+                    for future in concurrent.futures.as_completed(future_to_url):
+                        item = future_to_url[future]
+                        url = item["url"]
+                        depth = item["depth"]
+                        reason = item["reason"]
+                        
+                        try:
+                            scrape_result = future.result()
+                            
+                            if "error" in scrape_result:
+                                debug_log(f"Error scraping {url}: {scrape_result.get('error')}")
+                                exploration_path.append({
+                                    "url": url,
+                                    "depth": depth,
+                                    "reason": reason,
+                                    "success": False,
+                                    "error": scrape_result.get('error')
+                                })
+                                continue
+                            
+                            if scrape_result.get('content', '') == '':
+                                debug_log(f"No content extracted from {url}")
+                                continue
+                            
+                            # Add content to results
+                            content_results.append(scrape_result)
+                            debug_log(f"Added content from {url}, title: {scrape_result.get('title')}")
+                            
+                            # Record the successful exploration
+                            exploration_path.append({
+                                "url": url,
+                                "depth": depth,
+                                "reason": reason,
+                                "success": True,
+                                "title": scrape_result.get('title', 'No title')
+                            })
+                            
+                            # Extract links from the page for the next depth level (if following links)
+                            if follow_links and depth < max_depth:
+                                try:
+                                    headers = {
+                                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                                    }
+                                    response = requests.get(url, headers=headers, timeout=10)
+                                    soup = BeautifulSoup(response.text, 'html.parser')
+                                    
+                                    # Extract links from main content only
+                                    content_links = extract_main_content_links(url, soup)
+                                    debug_log(f"Extracted {len(content_links)} links from main content of {url}")
+                                    
+                                    if content_links:
+                                        next_level_candidates.append({
+                                            "url": url,
+                                            "links": content_links
+                                        })
+                                except Exception as e:
+                                    debug_log(f"Error extracting links from {url}: {str(e)}")
+                        
+                        except Exception as e:
+                            debug_log(f"Error processing result for {url}: {str(e)}")
+                
+                # Update current knowledge summary after each batch
+                if len(content_results) >= 2:
+                    try:
+                        # Create a brief summary of what we know so far
+                        knowledge_prompt = f"Briefly summarize what we know about '{query}' based on the following content. Be concise (50-100 words).\n\n"
+                        
+                        # Include at most 3 content items to avoid token limits
+                        for i, content in enumerate(content_results[-3:]):
+                            knowledge_prompt += f"Source {i+1}: {content.get('title', 'Untitled')}\n"
+                            content_text = content.get('content', '')
+                            knowledge_prompt += f"{content_text[:500]}...\n\n"
+                        
+                        knowledge_response = client.messages.create(
+                            model="claude-3-5-sonnet-20240620",
+                            max_tokens=200,
+                            temperature=0.1,
+                            system="You are a helpful assistant that creates concise summaries.",
+                            messages=[
+                                {"role": "user", "content": knowledge_prompt}
+                            ]
+                        )
+                        
+                        current_knowledge = knowledge_response.content[0].text.strip()
+                        debug_log(f"Updated current knowledge summary: {current_knowledge}")
+                    except Exception as e:
+                        debug_log(f"Error updating knowledge summary: {str(e)}")
+            
+            # Have Claude prioritize the next level links (if following links)
+            if follow_links and next_level_candidates:
+                debug_log(f"Prioritizing links from {len(next_level_candidates)} pages for depth {current_depth + 1}")
+                
+                all_candidate_links = []
+                for candidate in next_level_candidates:
+                    all_candidate_links.extend(candidate["links"])
+                
+                # If we have too many links, select a diverse sample
+                if len(all_candidate_links) > 30:
+                    debug_log(f"Too many candidate links ({len(all_candidate_links)}), selecting a sample")
+                    # Take every Nth link to get a diverse sample of about 30 links
+                    step = max(1, len(all_candidate_links) // 30)
+                    sampled_links = [all_candidate_links[i] for i in range(0, len(all_candidate_links), step)][:30]
+                    debug_log(f"Selected {len(sampled_links)} sample links")
+                    all_candidate_links = sampled_links
+                
+                # Have Claude select the most relevant links
+                if all_candidate_links:
+                    selected_links = prioritize_links_with_claude(
+                        query, 
+                        all_candidate_links, 
+                        current_knowledge, 
+                        max_links=max_links_per_page
+                    )
+                    
+                    debug_log(f"Claude selected {len(selected_links)} links to explore at depth {current_depth + 1}")
+                    
+                    # Add selected links to the next depth
+                    for link in selected_links:
+                        if link["url"] not in visited_urls:
+                            urls_to_scrape.append({
+                                "url": link["url"],
+                                "depth": current_depth + 1,
+                                "reason": link.get("reason", "Selected by relevance")
+                            })
+                            visited_urls.add(link["url"])
+            
+            # Move to the next depth level
+            current_depth += 1
+        
+        debug_log(f"Navigation complete. Explored {len(visited_urls)} URLs to depth {current_depth - 1}")
         
         if not content_results:
-            debug_log("No content could be extracted from any of the search results")
+            debug_log("No content could be extracted from any of the pages")
             return {
                 "search_results": search_results,
+                "exploration_path": exploration_path,
+                "follow_links_enabled": follow_links,
                 "content": [],
                 "ranked_content": [],
                 "summary_text": "No content could be extracted from the search results.",
                 "citations": []
             }
         
-        # Step 3: Rank sources based on relevance to the query and credibility
-        debug_log("Step 3: Ranking sources by similarity and credibility")
+        # Rank sources based on relevance to the query and credibility
+        debug_log("Ranking sources by similarity and credibility")
         ranked_content = rank_sources(content_results, query)
         
-        # Step 4: Create summary from ranked content
-        debug_log("Step 4: Creating summary")
-        summary_result = create_summary(query, ranked_content[:max(len(ranked_content), 5)])  # Use top 5 sources for summary
+        # Create summary from ranked content
+        debug_log("Creating summary")
+        summary_result = create_summary(query, ranked_content[:min(len(ranked_content), 5)])  # Use top 5 sources for summary
         
         result = {
             "search_results": search_results,
+            "visited_urls": list(visited_urls),
+            "exploration_path": exploration_path,
+            "depth_reached": current_depth - 1,
+            "follow_links_enabled": follow_links,
             "content": content_results,
             "ranked_content": ranked_content,
             "summary_text": summary_result.get("summary_text", "No summary available"),
@@ -535,7 +913,7 @@ def complete_search_pipeline(query: str, num_results: int = 5) -> dict:
         }
 
 @mcp.tool()
-def get_chat_response(query: str, chat_history: list = None) -> dict:
+def get_chat_response(query: str, chat_history: list = None, follow_links: bool = True) -> dict:
     """
     Get a response for a user query with chat history context.
     Uses QueryProcessor to enhance queries before searching.
@@ -543,11 +921,12 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
     Args:
         query: The user's query
         chat_history: List of previous queries and responses (optional)
+        follow_links: Whether to follow links from pages or stop at search results (default: True)
     
     Returns:
         Dictionary with search results and response
     """
-    debug_log(f"get_chat_response called with query: {query}, history length: {len(chat_history) if chat_history else 0}")
+    debug_log(f"get_chat_response called with query: {query}, history length: {len(chat_history) if chat_history else 0}, follow_links: {follow_links}")
     
     try:
         debug_log(f"Original query: {query}")
@@ -562,15 +941,21 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
         else:
             debug_log(f"Using original query due to error: {query_analysis.get('error')}")
 
-        search_results = complete_search_pipeline(enhanced_query)
+        search_results = complete_search_pipeline(
+            query=enhanced_query,
+            follow_links=follow_links
+        )
+        
         search_results["original_query"] = query
         search_results["enhanced_query"] = enhanced_query
+        search_results["follow_links_enabled"] = follow_links
         
         if "error" in search_results:
             debug_log(f"Search error: {search_results['error']}")
             return {
                 "query": query,
                 "enhanced_query": enhanced_query,
+                "follow_links_enabled": follow_links,
                 "response": f"I encountered an error: {search_results['error']}",
                 "search_results": search_results,
                 "citations": []
@@ -590,6 +975,7 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
         response = {
             "query": query,
             "enhanced_query": enhanced_query,
+            "follow_links_enabled": follow_links,
             "response": summary_text,
             "search_results": search_results,
             "citations": citations
@@ -602,6 +988,7 @@ def get_chat_response(query: str, chat_history: list = None) -> dict:
         debug_log(f"Error in get_chat_response: {str(e)}")
         return {
             "query": query,
+            "follow_links_enabled": follow_links,
             "response": f"Sorry, I encountered an error: {str(e)}",
             "search_results": {},
             "citations": []
