@@ -17,18 +17,14 @@ from transformers import AutoTokenizer, AutoModel
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Initialize the MCP server with a name
 mcp = FastMCP("Web Search MCP Server")
 
-# Set up logging
 log_file_path = os.path.join(os.getcwd(), "mcp_server_debug.txt")
 f = open(log_file_path, "w")
 
 def debug_log(message):
-    """Log debug messages to a file with timestamp"""
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     log_msg = f"{timestamp} - {message}"
     f.write(f"{log_msg}\n")
@@ -36,7 +32,6 @@ def debug_log(message):
 debug_log(f"MCP Server starting up. Debug log at: {log_file_path}")
 debug_log(f"Current working directory: {os.getcwd()}")
 
-# Initialize Anthropic client if API key is available
 client = None
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 if anthropic_api_key:
@@ -45,18 +40,14 @@ if anthropic_api_key:
 else:
     debug_log("Warning: ANTHROPIC_API_KEY not found, Claude-related functions will be unavailable")
 
-# Load tokenizer and model for embedding
 def load_tokenizer_and_model(name="sentence-transformers/all-MiniLM-L6-v2"):
-    """Load the tokenizer and model for text embeddings"""
     tokenizer = AutoTokenizer.from_pretrained(name)
     model = AutoModel.from_pretrained(name)
     return tokenizer, model
 
-# Initialize tokenizer and model
 tokenizer, model = load_tokenizer_and_model()
 debug_log("Tokenizer and model loaded successfully")
 
-# Helper function for mean pooling on model output
 def mean_pooling(model_output, attention_mask):
     """Create mean pooling for embeddings"""
     token_embeddings = model_output.last_hidden_state
@@ -66,9 +57,7 @@ def mean_pooling(model_output, attention_mask):
     mean_embeddings = sum_embeddings / sum_mask
     return mean_embeddings
 
-# Function to make embeddings of documents
 def embed_documents(documents, tokenizer, model):
-    """Create embeddings for a list of documents"""
     encoded_input = tokenizer(documents, return_tensors="pt", padding=True, truncation=True, max_length=512)
     with torch.no_grad():
         model_output = model(**encoded_input)
@@ -97,7 +86,6 @@ def web_search(query: str, num_results: int = 5) -> Dict[str, Any]:
         
         debug_log(f"Performing search with query: {query}")
 
-        # Setting pause to avoid getting blocked
         search_results = list(search(
             query,
             num=num_results,
@@ -182,7 +170,7 @@ def assign_credibility_score(urls: List[str]) -> Dict[str, float]:
     
     if not client:
         debug_log("Cannot assign credibility scores: Anthropic client not initialized")
-        return {url: 0.5 for url in urls}  # Default score when client is unavailable
+        return {url: 0.5 for url in urls}  # Default score 
     
     try:
         def process_url_batch(urls_batch):
@@ -225,11 +213,9 @@ def assign_credibility_score(urls: List[str]) -> Dict[str, float]:
         
         debug_log(f"Split {len(urls)} URLs into {len(batches)} batches for parallel processing")
         
-        # Process batches in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
             batch_tasks = [executor.submit(process_url_batch, batch) for batch in batches]
             
-            # Collect results from all batches
             all_credibility_scores = {}
             for task in concurrent.futures.as_completed(batch_tasks):
                 batch_scores = task.result()
@@ -266,7 +252,6 @@ def rank_content(documents: List[Dict[str, Any]], query: str) -> List[Dict[str, 
         def embed_single_doc(text, tokenizer, model):
             return embed_documents([text], tokenizer, model)
         
-        # Use ThreadPoolExecutor to generate embeddings in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
             embed_fn = partial(embed_single_doc, tokenizer=tokenizer, model=model)
             doc_embeddings_list = list(executor.map(embed_fn, doc_texts))
@@ -281,22 +266,20 @@ def rank_content(documents: List[Dict[str, Any]], query: str) -> List[Dict[str, 
         if client:
             credibility_scores = assign_credibility_score(urls)
         else:
-            credibility_scores = {url: 0.5 for url in urls}  # Default score when client is unavailable
+            credibility_scores = {url: 0.5 for url in urls}  # Default score 
         
         for i, doc in enumerate(documents):
             doc["similarity"] = float(similarities[i])
             url = doc.get("url", "")
-            doc["credibility"] = credibility_scores.get(url, 0.5)  # Default to 0.5 if not found
+            doc["credibility"] = credibility_scores.get(url, 0.5)  # Default to 0.5 
         
-        # Resolve conflicts between documents (if implemented)
-        # For now, just sort by similarity
         ranked_docs = sorted(documents, key=lambda x: x.get("similarity", 0), reverse=True)
         
         debug_log(f"Successfully ranked {len(ranked_docs)} documents")
         return ranked_docs
     except Exception as e:
         debug_log(f"Error in rank_content: {str(e)}")
-        return documents  # Return original documents on error
+        return documents  
 
 @mcp.tool(description="Create a summary of documents in relation to a query")
 def create_summary(query: str, documents: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -322,7 +305,6 @@ def create_summary(query: str, documents: List[Dict[str, Any]]) -> Dict[str, Any
         }
     
     try:
-        # Extract the top N documents (limiting to top 5)
         top_n = min(5, len(documents))
         top_documents = documents[:top_n]
         
@@ -333,7 +315,6 @@ def create_summary(query: str, documents: List[Dict[str, Any]]) -> Dict[str, Any
         
         for i, doc in enumerate(top_documents):
             if "content" in doc and doc["content"]:
-                # Truncate very long documents to avoid exceeding token limits
                 content = doc["content"]
                 if len(content) > 10000:
                     content = content[:10000] + "..."
@@ -408,7 +389,6 @@ def search_and_summarize(query: str, num_results: int = 5) -> Dict[str, Any]:
     debug_log(f"Number of results requested: {num_results}")
     
     try:
-        # Step 1: Perform search
         debug_log("Step 1: Performing search")
         search_results = web_search(query, num_results)
         
@@ -420,7 +400,6 @@ def search_and_summarize(query: str, num_results: int = 5) -> Dict[str, Any]:
                 "citations": []
             }
         
-        # Step 2: Extract content from each search result
         debug_log("Step 2: Extracting content from search results")
         content_results = []
         
@@ -440,11 +419,9 @@ def search_and_summarize(query: str, num_results: int = 5) -> Dict[str, Any]:
                 "citations": []
             }
         
-        # Step 3: Rank content
         debug_log("Step 3: Ranking content")
         ranked_content = rank_content(content_results, query)
         
-        # Step 4: Create summary
         debug_log("Step 4: Creating summary")
         summary_result = create_summary(query, ranked_content[:min(len(ranked_content), 5)])
         
@@ -484,7 +461,6 @@ def process_query(query: str, use_claude: bool = True) -> Dict[str, Any]:
     debug_log(f"Use Claude enhancement: {use_claude}")
 
     try:
-        # Import QueryProcessor from existing code
         from query import QueryProcessor
         
         query_processor = QueryProcessor(claude_client=client if use_claude else None)
@@ -500,7 +476,6 @@ def process_query(query: str, use_claude: bool = True) -> Dict[str, Any]:
             "error": str(e)
         }
 
-# Add request/response logging middleware
 @mcp.tool(description="Health check to verify server is running")
 def health_check() -> Dict[str, Any]:
     """
@@ -516,7 +491,6 @@ def health_check() -> Dict[str, Any]:
         "server": "Web Search MCP Server"
     }
 
-# Main execution
 if __name__ == "__main__":
     debug_log("Starting MCP Server")
     debug_log("Available tools: web_search, web_fetch, assign_credibility_score, rank_content, create_summary, search_and_summarize, process_query, health_check")
