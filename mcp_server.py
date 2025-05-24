@@ -33,9 +33,6 @@ def debug_log(message):
     log_msg = f"{timestamp} - {message}"
     f.write(f"{log_msg}\n")
     f.flush()
-    # Also print to console for real-time debugging
-    print(f"[DEBUG] {log_msg}")
-
 debug_log(f"MCP Server starting up. Debug log at: {log_file_path}")
 debug_log(f"Current working directory: {os.getcwd()}")
 
